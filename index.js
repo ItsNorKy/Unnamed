@@ -23,5 +23,4 @@ mongodb().catch(console.dir)
 
 module.exports = { client }
 
-console.log("Bot token:", process.env.TOKEN ? "Loaded" : "Not found");
 client.login(token)
