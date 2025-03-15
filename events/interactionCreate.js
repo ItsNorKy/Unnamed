@@ -1,12 +1,18 @@
 const { Events } = require("discord.js");
 const { loadMenu } = require("../handlers/menuHandler");
+const { loadMoadl } = require("../handlers/modalHandler");
 
 module.exports = {
-    name: Events.InteractionCreate,
+    name: "interactionCreate",
     async execute(interaction, client) {
         try {
             if (interaction.isStringSelectMenu()) {
                 await loadMenu(interaction, client);
+                return;
+            }
+
+            if (interaction.isModalSubmit()) {
+                await loadModal(interaction, client);
                 return;
             }
 

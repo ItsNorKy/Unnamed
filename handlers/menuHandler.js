@@ -5,7 +5,6 @@ const selected = require("../utilities/selected")
 
 async function loadMenu(interaction, client) {
 
-
     if (!interaction.isStringSelectMenu()) return; 
     if (interaction.customId !== "servers") return; 
 
@@ -49,7 +48,11 @@ async function loadMenu(interaction, client) {
     await interaction.update({
         embeds: [success],
         components: [] 
-    });
+    }).then(() => {
+
+        // Create ticket channel
+
+    })
 }
 
 module.exports = { loadMenu, selected };
