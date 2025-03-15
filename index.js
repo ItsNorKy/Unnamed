@@ -1,6 +1,8 @@
 const { Client, GatewayIntentBits, Partials, Collection} = require("discord.js")
 const { Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent } = GatewayIntentBits
 const { User, Message, GuildMember, Channel } = Partials
+require("dotenv").config()
+const token = process.env.TOKEN;
 
 const client = new Client({
   intents: [Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent],
@@ -19,4 +21,5 @@ loadCommands(client)
 
 module.exports = { client }
 
-client.login(client.config.token)
+console.log("Bot token:", process.env.TOKEN ? "Loaded" : "Not found");
+client.login(token)

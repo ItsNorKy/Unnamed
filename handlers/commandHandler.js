@@ -1,7 +1,9 @@
 async function loadCommands(client) {
 
     const { REST, Routes } = require('discord.js');
-    const { clientid, guildid, token } = require('../config.json');
+    require("dotenv")
+    const token = process.env.TOKEN
+    const { clientid, guildid } = require('../config.json');
     const { loadFiles } = require("../function/fileLoader")
     const ascii = require("ascii-table")
     const table = new ascii().setHeading("Commands", "Status")
