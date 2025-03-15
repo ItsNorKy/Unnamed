@@ -2,13 +2,14 @@ const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, Ac
 const config = require("../config.json")
 const servers = require("../servers.json")
 const cooldown = new Map()
+const { handleInteraction } = require("../events/SelectMenu")
 
 module.exports = {
     name: "messageCreate",
     once: false,
 
-    execute(message, client) {
-        
+    execute(message, client, interaction) {
+
         if (message.author.bot) return;
 
         if (message.channel.isDMBased()) {
@@ -66,32 +67,13 @@ module.exports = {
                 .setFooter({
                     text: "📝 If the application is unavailable, please contact the developers for further assistance.",
                 })
-            message.channel.send({ embeds: [success], components: [row] }).then(() => {
-
-                // Handling selection
-                if (!interaction.isStringSelectMenu()) return;
-                if (interaction.customId === "servers") {
-                    const selectedValue = interaction.values[0]
-
-                    if (selectedValue === "devsv") {
-
-                        // im lazy, leave this shit for later
-
-                    } else if (selectedValue === "supsv1")  {
-
-                        interaction.reply({
-                            content: "ok",
-                        }
-                        )
-
-                }
-            }
-            })
+            message.channel.send({ embeds: [success], components: [row] })
 
             console.log("Received DM: " + message.content);
         }
     }
-};
+}
+
 
 // To be implemented:
 // Schema / Mongoose Database for storing User's Server Data
