@@ -2,21 +2,22 @@ const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, Ac
 const config = require("../config.json")
 const servers = require("../servers.json")
 const cooldown = new Map()
-const { handleInteraction } = require("../events/SelectMenu")
+const selected = require("../utilities/selected")
 
 module.exports = {
     name: "messageCreate",
     once: false,
 
-    execute(message, client, interaction) {
+    execute(message, client) {
 
         if (message.author.bot) return;
 
         if (message.channel.isDMBased()) {
 
-            // Genera Cooldown 10s
+            // General Cooldown 10s
             const userId = message.author.id 
             const cooldownTime = 10 * 1000;
+
 
             if (cooldown.has(userId)) {
                 const timeLeft = cooldown.get(userId) - Date.now();
@@ -33,6 +34,11 @@ module.exports = {
 
             cooldown.set(userId, Date.now() + cooldownTime);
             setTimeout(() => cooldown.delete(userId), cooldownTime);
+
+            if (selected.has(userId)) {
+                console.log(`[INFO] User ${userId} already selected a server. Ignoring.`);
+                return; 
+            }
 
             // Select Server
             const DevSV = client.guilds.cache.get(servers.Dev_Server)   

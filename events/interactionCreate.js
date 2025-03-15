@@ -1,12 +1,35 @@
-const { handleInteraction } = require("../events/SelectMenu");
+const { Events } = require("discord.js");
+const { loadMenu } = require("../handlers/menuHandler");
 
 module.exports = {
-    name: "interactionCreate",
-    once: false,
-
+    name: Events.InteractionCreate,
     async execute(interaction, client) {
-        if (interaction.isStringSelectMenu()) {
-            await handleInteraction(interaction, client);
+        try {
+            if (interaction.isStringSelectMenu()) {
+                await loadMenu(interaction, client);
+                return;
+            }
+
+            if (interaction.isChatInputCommand()) {
+                const command = client.commands.get(interaction.commandName);
+                if (!command) {
+                    return interaction.reply({
+                        content: "Command is outdated",
+                        ephemeral: true,
+                    });
+                }
+
+                if (command.developer && interaction.user.id !== "590827375189557259") {
+                    return interaction.reply({
+                        content: "Insufficient permission to execute this command",
+                        ephemeral: true,
+                    });
+                }
+
+                await command.execute(interaction, client);
+            }
+        } catch (error) {
+            console.error("Error handling interaction:", error);
         }
     },
 };
