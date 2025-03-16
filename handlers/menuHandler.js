@@ -394,8 +394,7 @@ async function loadMenu(interaction, client) {
             .setColor("Red")
             .setDescription("Unable to establish connection to the selected server. An error has occurred, please report this to the server moderation team.")
             .addFields(
-                { name: "\n", value: `**Missing Required Permissions:**\n** **\n> \`Manage Channels\`\n> \`View Channel\`\n> \`Send Messages\`\n> \`Manage Messages\`\n> \`Manage Permissions\`` },
-                { name: "\n", value: "Please make sure the application is granted the required permissions for the ticket category, its role permissions in general or the role position." }
+                { name: "\n", value: "> The bot has not been properly setup for this server. Please run the `/ticket setup` first. For further assistance, please contact the development team." }
             )
             .setFooter(
                 { text: "If you think this is an error, please contact the development team immediately." }

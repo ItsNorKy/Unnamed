@@ -18,6 +18,7 @@ module.exports = {
             { name: "resume", value: "resume"},
             { name: "block", value: "block"},
             { name: "setup", value: "setup"},
+            { name: "clear", value: "clear"},
             { name: "whitelist", value: "whitelist"},
         )
     ),
@@ -123,7 +124,6 @@ module.exports = {
             .setColor("Red")
             .setDescription("Unable to perform this action, insufficient permission")
             interaction.reply({embeds: [invalid], flags: 64})
-
             }
 
         } else if (option == "whitelist") {
@@ -134,7 +134,7 @@ module.exports = {
                 const roles = server.allowedRoles.map(roleId => `<@&${roleId}>`).join(", ") 
 
                 if (server.allowedRoles == "") {
-
+                
                 const whitelist = new EmbedBuilder()
                 .setColor(config.defaultclr)
                 .setTitle(`Whitelist Management`)
@@ -144,7 +144,7 @@ module.exports = {
                 )
 
                 interaction.reply(
-                    
+
                     { embeds: [whitelist]}
                 )
 

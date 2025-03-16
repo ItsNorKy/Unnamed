@@ -33,39 +33,56 @@ async function loadModal(interaction, client) {
             existingCategory.categoryId = categoryid
             await existingCategory.save()
 
+            const getcategory = interaction.guild.channels.cache.get(categoryid)
+
+            await getcategory.permissionOverwrites.edit(interaction.guild.id, {
+                [PermissionsBitField.Flags.ViewChannel]: false,
+            })
+            await getcategory.permissionOverwrites.edit(interaction.guild.members.me.id, {
+                [PermissionsBitField.Flags.ViewChannel]: true,
+                [PermissionsBitField.Flags.SendMessages]: true,
+                [PermissionsBitField.Flags.ManageChannels]: true,
+                [PermissionsBitField.Flags.ManageMessages]: true,
+            });
+
         } else { // NEW DATA
             
             try {
-                
-            await interaction.guild.channels.create({
 
-                    name: "ticket-logs",
-                    type: ChannelType.GuildText,
-                    parent: categoryid,
-                    permissionOverwrites: [
-                    {
-                        id: interaction.guild.members.me.id,
-                        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ManageMessages],
-                    },
-            
-                    {
-                        id: interaction.guild.id,
-                        deny: [PermissionsBitField.Flags.ViewChannel],
-                    }
-                ]
-            }).then(async(a) => {
+            // Create Ticket Category
 
-                await ServerTicketCat.create({ guildId, categoryId: categoryid, allowedRoles: [], appstatus: "Online", logsChannelID: a.id})
+            const getcategory = interaction.guild.channels.cache.get(categoryid)
 
+            await getcategory.permissionOverwrites.edit(interaction.guild.id, {
+                [PermissionsBitField.Flags.ViewChannel]: false,
             })
+
+            await getcategory.permissionOverwrites.edit(interaction.guild.members.me.id, {
+                [PermissionsBitField.Flags.ViewChannel]: true,
+                [PermissionsBitField.Flags.SendMessages]: true,
+                [PermissionsBitField.Flags.ManageChannels]: true,
+                [PermissionsBitField.Flags.ManageMessages]: true,
+            });
+        
+            //Create logs channel inside Ticket Category    
+            const logschannel = await interaction.guild.channels.create({
+
+                name: "ticket-logs",
+                type: ChannelType.GuildText,
+                parent: getcategory.id,
+            })
+        
+                await logschannel.lockPermissions() // Sync perm with Category
+
+                await ServerTicketCat.create({ guildId, categoryId: category.id, allowedRoles: [], appstatus: "Online", logsChannelID: logschannel.id})
+
             } catch (error) {
 
                 const errormsg = new EmbedBuilder()
                 .setColor("Red")
                 .setDescription("Unable to create logs channel. An error has occurred, please report this to the server moderation team.")
                 .addFields(
-                    { name: "\n", value: `**Missing Required Permissions:**\n** **\n> \`Manage Channels\`\n> \`View Channel\`\n> \`Send Messages\`\n> \`Manage Messages\`\n> \`Manage Permissions\`` },
-                    { name: "\n", value: "Please make sure the application is granted the required permissions for the ticket category, its role permissions in general or the role position." }
+                    { name: "\n", value: "> The bot has not been properly setup for this server. Please run the `/ticket setup` first. For further assistance, please contact the development team." }
                 )
                 .setFooter(
                     { text: "If you think this is an error, please contact the development team immediately." }
@@ -75,9 +92,7 @@ async function loadModal(interaction, client) {
                 })
 
                 console.log("There was an error creating the `ticket-logs` channel:", error)
-
             }
-
         }
 
         const success = new EmbedBuilder()
