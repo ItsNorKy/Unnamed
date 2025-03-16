@@ -1,5 +1,7 @@
 const { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionsBitField, ChannelType, Events, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelSelectMenuBuilder } = require("discord.js")
 const config = require("../../config.json")
+const { getAllowedRoles, removeAllowedRole, addAllowedRole } = require("../../handlers/whitelist")
+const schemaServer = require("../../schemas/schemaServer")
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,11 +13,12 @@ module.exports = {
         .setDescription("command options")
         .setRequired(true)
         .addChoices(
-            { name: "create", value: "create"},
             { name: "close", value: "close"},
             { name: "freeze", value: "freeze"},
             { name: "resume", value: "resume"},
+            { name: "block", value: "block"},
             { name: "setup", value: "setup"},
+            { name: "whitelist", value: "whitelist"},
         )
     ),
 
@@ -32,30 +35,80 @@ module.exports = {
         // Setup ticket listening channel
         const option = interaction.options.getString("options")
 
+        if (option == "close") {
+
+        }
+
         if (option == "setup") {
 
             if (interaction.memberPermissions.has(PermissionsBitField.Flags.ManageChannels)) { // Require Manage Channels permission
                 
-            const channelsetup = new ModalBuilder()
-			.setCustomId('channelsetup')
-			.setTitle('Ticket channel setup');
+            const categorysetup = new ModalBuilder()
+			.setCustomId('categorysetup')
+			.setTitle('Ticket Category Setup');
 
-		    const channels = new TextInputBuilder()
-			.setCustomId('channels')   
-			.setLabel("Ticket channel's id")
+		    const category = new TextInputBuilder()
+			.setCustomId('category')   
+			.setLabel("Ticket Category's id")
 			.setStyle(TextInputStyle.Short);
 
-            const firstActionRow = new ActionRowBuilder().addComponents(channels);
-            channelsetup.addComponents(firstActionRow)
+            const firstActionRow = new ActionRowBuilder().addComponents(category);
+            categorysetup.addComponents(firstActionRow)
 
-            await interaction.showModal(channelsetup)
+            await interaction.showModal(categorysetup)
 
         } else { // Invalid Permission
 
             const invalid = new EmbedBuilder()
             .setColor("Red")
-            .setDescription("Unable to perform this action on the current channel")
+            .setDescription("Unable to perform this action, insufficient permission")
             interaction.reply({embeds: [invalid], flags: 64})
+
+            }
+
+        } else if (option == "whitelist") {
+
+            if (interaction.memberPermissions.has(PermissionsBitField.Flags.ManageRoles)) { // Require Manage Roles permission
+                
+                const server = await schemaServer.findOne({ guildId: interaction.guild.id})
+                const roles = server.allowedRoles.map(roleId => `<@&${roleId}>`).join(", ") 
+
+                if (server.allowedRoles == "") {
+
+                const whitelist = new EmbedBuilder()
+                .setColor(config.defaultclr)
+                .setTitle(`Whitelist Management`)
+                .setDescription(`Add or Remove roles that are allowed to view ticket channels and respond to them.`)
+                .addFields(
+                    {name: `\n`, value: "> The list is empty, start by adding a role!"},
+                )
+
+                interaction.reply(
+                    { embeds: [whitelist]}
+                )
+
+            } else {
+
+                const whitelist = new EmbedBuilder()
+                .setColor(config.defaultclr)
+                .setTitle(`Whitelisted Roles`)
+                .setDescription(`Add or Remove roles that are allowed to view ticket channels and respond to them.`)
+                .addFields(
+                    {name: `\n`, value: `> ${roles}`},
+                )
+
+                interaction.reply(
+                    { embeds: [whitelist]}
+                )
+            }
+
+            } else { // Invalid Permission
+
+                const invalid = new EmbedBuilder()
+                .setColor("Red")
+                .setDescription("Unable to perform this action, insufficient permission")
+                interaction.reply({embeds: [invalid], flags: 64})
+    
             }
         }
     }

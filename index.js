@@ -11,7 +11,7 @@ const client = new Client({
 
 const { loadEvents } = require("./handlers/eventHandler")
 const { loadCommands } = require("./handlers/commandHandler")
-const { mongodb } = require("./handlers/mongodb")
+const { connectDB } = require("./handlers/mongodb")
 
 client.config = require("./config.json")
 client.events = new Collection()
@@ -19,7 +19,7 @@ client.commands = new Collection()
 
 loadEvents(client)
 loadCommands(client)
-mongodb().catch(console.dir)
+connectDB()
 
 module.exports = { client }
 

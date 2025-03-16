@@ -18,7 +18,6 @@ module.exports = {
             const userId = message.author.id 
             const cooldownTime = 10 * 1000;
 
-
             if (cooldown.has(userId)) {
                 const timeLeft = cooldown.get(userId) - Date.now();
                 if (timeLeft > 0) {
@@ -67,8 +66,8 @@ module.exports = {
                 .setTitle("**Server selection**")
                 .setDescription(`Before creating a ticket, please select a desired server for contacting. You may find the information about the supported servers below:`)
                 .addFields(
-                    {name: `\n`, value: `> 🔧 **[${DevSV}](https://discord.gg/hmD9EdUCxV)** \n> ** **\n> **Server type:** \`Dev Server\` \n> **Member counts:** \`${DevSV.memberCount}\`\n> **Application status:** \`Online\``, inline: true},
-                    {name: `\n`, value: `> ✅ **Supported server** \n> ** **\n> **Server type:** \`Supported server\` \n> **Member counts:** \`    \`\n> **Application status:** \`Online\``, inline: true},
+                    {name: `\n`, value: `> 🔧 **[${DevSV}](https://discord.gg)** \n> ** **\n> **Server type:** \`Dev Server\` \n> **Member counts:** \`${DevSV.memberCount}\`\n> **Application status:** \`Online\``, inline: true},
+                    {name: `\n`, value: `> ✅ **[${JXND}](https://discord.gg/jjZMNjzzjQ)** \n> ** **\n> **Server type:** \`Supported server\` \n> **Member counts:** \`${JXND.memberCount}\`\n> **Application status:** \`Online\``, inline: true},
                 )
                 .setFooter({
                     text: "📝 If the application is unavailable, please contact the developers for further assistance.",
