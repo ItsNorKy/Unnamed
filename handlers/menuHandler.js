@@ -19,7 +19,7 @@ async function loadMenu(interaction, client) {
 
     if (selectedValue === "devsv") {
         
-        const server = await schemaServer.findOne({ guildId: DevSVID })
+        const server = await schemaServer.findOne({ guildId: DevSV })
 
         if (!server) {
 
@@ -33,6 +33,7 @@ async function loadMenu(interaction, client) {
             console.log("No data found in database")
             return interaction.reply({embeds: [invalid], flags: 64})
         }
+
 
         if (!server.categoryId) {
 
@@ -48,6 +49,22 @@ async function loadMenu(interaction, client) {
         }
             
             const guild = client.guilds.cache.get(server.guildId)  
+
+            const x = await guild.channels.fetch()
+            const channel = [...x.values()].find(c => c.name === interaction.user.username);
+
+            if (channel) {
+
+            const existed = new EmbedBuilder()
+            .setColor("Red")
+            .setDescription("Unable to create a new ticket, you already have an active ticket.")
+            .setFooter(
+        
+                { text: "If you think this is an error, please contact the development team immediately."}
+            )
+            return interaction.reply({embeds: [existed], flags: 64})
+
+            }
 
             try {
 
@@ -94,9 +111,9 @@ async function loadMenu(interaction, client) {
 
                 success = new EmbedBuilder()
                 .setColor("Green")
-                .setTitle(`**${JXND}**`)
+                .setTitle(`**${DevSV}**`)
                 .setThumbnail(`${DevSV.iconURL()}`)
-                .setDescription(`Successfully created a ticket for \`${JXND}\`. Please wait for a staff member to respond to your ticket.`)
+                .setDescription(`Successfully created a ticket for \`${DevSV}\`. Please wait for a staff member to respond to your ticket.`)
                 .addFields(
                     { name: "**Please note:**", value: `- There will be a minimum of 10 seconds cooldown per message, please keep the conversation civilized and respect other party.\n- Staff members reserve the rights to close, freeze and block your ticket.\n- For technical problems regarding the application, please contact the development team.`},
                 )
@@ -115,14 +132,64 @@ async function loadMenu(interaction, client) {
                 const successfulConnection = new EmbedBuilder()
                 .setColor(config.defaultclr)
                 .setTitle("**New Ticket Received**")
-                .setDescription("A new ticket has been created. To respond, type a message in this channel. Messages that contains global prefix `.` are ignored, and will not be sent. Staff members may close, freeze, resume the ticket using the available ticket commands.")
+                .setDescription("A new ticket has been created. To respond, type a message in this channel. Messages containing global prefix `.` are ignored, and will not be sent. Staff members may close, freeze, resume the ticket using the available ticket commands.")
                 .addFields(
-                    { name: "> **User**", value: `> <@${interaction.user.id}> - ${interaction.user.id}`, inline: true},
-                    { name: "> **Roles**", value: `> ${userRoles}`}
+                    { name: "\n", value: `> **User**\n> ** **\n> <@${interaction.user.id}>\n> ** **\n> (${interaction.user.id})`, inline: true},
+                    { name: "\n", value: `> **Roles**\n> ** **\n> ${userRoles}`, inline: true}
                 )
+                .setFooter({
+                    text: "All messages from this ticket will be monitored or logged for development purposes."
+                })
 
                 a.send({
                     embeds: [successfulConnection]
+                }).then(async () => {
+
+                    // Logging
+                    const logs_channelID = server.logsChannelID
+
+                    try {
+
+                        if (logs_channelID) {
+
+                        const logs_channel = guild.channels.cache.get(logs_channelID)
+                        var time = new Date();
+                        const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+
+                        const newTicket = new EmbedBuilder()
+                        .setColor("Green")
+                        .setTitle("**New Ticket**")
+                        .setDescription(`<@${interaction.user.id}> has created a ticket`)
+                        .setFooter({
+                            iconURL: interaction.user.avatarURL(),
+                            text: `${interaction.user.username} (${interaction.user.id}) - Today at ${now}`
+                        })
+
+                        logs_channel.send({
+
+                            embeds: [newTicket],
+
+                        })
+
+                        } else {
+
+                        const errormsg = new EmbedBuilder()
+                            .setColor("Red")
+                            .setDescription("Unable to generate a log for this ticket. An error has occurred, please report this to the server moderation team.")
+                            .addFields(
+                                { name: "\n", value: "> The bot has not been properly setup for this server. Please run the `/ticket setup` first. For further assistance, please contact the development team." }
+                            )
+                            .setFooter(
+                                { text: "If you think this is an error, please contact the development team immediately." }
+                            );
+                            interaction.reply({
+                                embeds: [errormsg], flags: 64
+                            })
+                        }
+
+                    } catch (error) {
+                        console.log("Error occured when logging", error)
+                    }
                 })
             })
 
@@ -132,7 +199,7 @@ async function loadMenu(interaction, client) {
             .setColor("Red")
             .setDescription("Unable to establish connection to the selected server. An error has occurred, please report this to the server moderation team.")
             .addFields(
-                { name: "\n", value: `**Missing Required Permissions:**\n** **\n> \`Manage Channels\`\n> \`View Channel\`\n> \`Send Messages\`\n> \`Manage Messages\`` },
+                { name: "\n", value: `**Missing Required Permissions:**\n** **\n> \`Manage Channels\`\n> \`View Channel\`\n> \`Send Messages\`\n> \`Manage Messages\`\n> \`Manage Permissions\`` },
                 { name: "\n", value: "Please make sure the application is granted the required permissions for the ticket category, its role permissions in general or the role position." }
             )
             .setFooter(
@@ -143,7 +210,7 @@ async function loadMenu(interaction, client) {
             embeds: [success],
             components: [] 
         })
-    }
+        }    
 
     } else if (selectedValue === "supsv1") { // JAXINA DOMAIN 
 
@@ -240,7 +307,7 @@ async function loadMenu(interaction, client) {
                 success = new EmbedBuilder()
                 .setColor("Green")
                 .setTitle(`**${JXND}**`)
-                .setThumbnail(`${DevSV.iconURL()}`)
+                .setThumbnail(`${JXND.iconURL()}`)
                 .setDescription(`Successfully created a ticket for \`${JXND}\`. Please wait for a staff member to respond to your ticket.`)
                 .addFields(
                     { name: "**Please note:**", value: `- There will be a minimum of 10 seconds cooldown per message, please keep the conversation civilized and respect other party.\n- Staff members reserve the rights to close, freeze and block your ticket.\n- For technical problems regarding the application, please contact the development team.`},
@@ -265,9 +332,59 @@ async function loadMenu(interaction, client) {
                     { name: "\n", value: `> **User**\n> ** **\n> <@${interaction.user.id}>\n> ** **\n> (${interaction.user.id})`, inline: true},
                     { name: "\n", value: `> **Roles**\n> ** **\n> ${userRoles}`, inline: true}
                 )
+                .setFooter({
+                    text: "All messages from this ticket will be monitored or logged for development purposes."
+                })
 
                 a.send({
                     embeds: [successfulConnection]
+                }).then(async () => {
+
+                    // Logging
+                    const logs_channelID = server.logsChannelID
+
+                    try {
+
+                        if (logs_channelID) {
+
+                        const logs_channel = guild.channels.cache.get(logs_channelID)
+                        var time = new Date();
+                        const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+
+                        const newTicket = new EmbedBuilder()
+                        .setColor("Green")
+                        .setTitle("**New Ticket**")
+                        .setDescription(`<@${interaction.user.id}> has created a ticket`)
+                        .setFooter({
+                            iconURL: interaction.user.avatarURL(),
+                            text: `${interaction.user.username} (${interaction.user.id}) - Today at ${now}`
+                        })
+
+                        logs_channel.send({
+
+                            embeds: [newTicket],
+
+                        })
+
+                        } else {
+
+                        const errormsg = new EmbedBuilder()
+                            .setColor("Red")
+                            .setDescription("Unable to generate a log for this ticket. An error has occurred, please report this to the server moderation team.")
+                            .addFields(
+                                { name: "\n", value: "> The bot has not been properly setup for this server. Please run the `/ticket setup` first. For further assistance, please contact the development team." }
+                            )
+                            .setFooter(
+                                { text: "If you think this is an error, please contact the development team immediately." }
+                            );
+                            interaction.reply({
+                                embeds: [errormsg], flags: 64
+                            })
+                        }
+
+                    } catch (error) {
+                        console.log("Error occured when logging", error)
+                    }
                 })
             })
 

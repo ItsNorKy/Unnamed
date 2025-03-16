@@ -6,6 +6,7 @@ const Server = new Schema({
     categoryId: { type: String, required: true, unique: true},
     allowedRoles: { type: [String], default: []},
     appstatus: { type: String, required: true, default: "Online"},
+    logsChannelID: { type: String, required: true, unique: true},
 
 });
 

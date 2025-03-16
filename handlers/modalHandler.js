@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require("discord.js")
+const { EmbedBuilder, ChannelType, PermissionsBitField } = require("discord.js")
 const config = require("../config.json")
 const servers = require("../servers.json")
 const { isCategoryChannel } = require("./isCategoryChannel")
@@ -33,9 +33,50 @@ async function loadModal(interaction, client) {
             existingCategory.categoryId = categoryid
             await existingCategory.save()
 
-        } else {
+        } else { // NEW DATA
+            
+            try {
+                
+            await interaction.guild.channels.create({
 
-            await ServerTicketCat.create({ guildId, categoryId: categoryid, allowedRoles, appstatus})
+                    name: "ticket-logs",
+                    type: ChannelType.GuildText,
+                    parent: categoryid,
+                    permissionOverwrites: [
+                    {
+                        id: interaction.guild.members.me.id,
+                        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ManageMessages],
+                    },
+            
+                    {
+                        id: interaction.guild.id,
+                        deny: [PermissionsBitField.Flags.ViewChannel],
+                    }
+                ]
+            }).then(async(a) => {
+
+                await ServerTicketCat.create({ guildId, categoryId: categoryid, allowedRoles: [], appstatus: "Online", logsChannelID: a.id})
+
+            })
+            } catch (error) {
+
+                const errormsg = new EmbedBuilder()
+                .setColor("Red")
+                .setDescription("Unable to create logs channel. An error has occurred, please report this to the server moderation team.")
+                .addFields(
+                    { name: "\n", value: `**Missing Required Permissions:**\n** **\n> \`Manage Channels\`\n> \`View Channel\`\n> \`Send Messages\`\n> \`Manage Messages\`\n> \`Manage Permissions\`` },
+                    { name: "\n", value: "Please make sure the application is granted the required permissions for the ticket category, its role permissions in general or the role position." }
+                )
+                .setFooter(
+                    { text: "If you think this is an error, please contact the development team immediately." }
+                );
+                interaction.reply({
+                    embeds: [errormsg], flags: 64
+                })
+
+                console.log("There was an error creating the `ticket-logs` channel:", error)
+
+            }
 
         }
 
