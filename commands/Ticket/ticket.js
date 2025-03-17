@@ -10,16 +10,12 @@ module.exports = {
     .addStringOption(option =>
         option
         .setName("options")
-        .setDescription("command options")
+        .setDescription("Command options")
         .setRequired(true)
         .addChoices(
             { name: "close", value: "close"},
-            { name: "freeze", value: "freeze"},
-            { name: "resume", value: "resume"},
-            { name: "block", value: "block"},
             { name: "setup", value: "setup"},
-            { name: "clear", value: "clear"},
-            { name: "whitelist", value: "whitelist"},
+            { name: "configs", value: "configs"}
         )
     ),
 
@@ -45,6 +41,8 @@ module.exports = {
           const ticket_category_id = server.categoryId
           const ticket_logs_id = server.logsChannelID
           const log_channel = interaction.guild.channels.cache.get(ticket_logs_id)
+
+          if (log_channel) {
 
           let ticket_channel = interaction.channel.parentId
 
@@ -80,7 +78,14 @@ module.exports = {
             .setDescription("Unable to perform this action on the current channel")
             interaction.reply({embeds: [invalid], flags: 64})
 
+          }
+
+        } else {
+
+            console.log("Error, logs-channel does not exist. This action is not saved")
+            await interaction.channel.delete()
         }
+
         } else {
 
         const errormsg = new EmbedBuilder()
@@ -102,21 +107,99 @@ module.exports = {
 
         } else if (option == "setup") {
 
-            if (interaction.memberPermissions.has(PermissionsBitField.Flags.ManageChannels)) { // Require Manage Channels permission
-                
+            if (interaction.memberPermissions.has(PermissionsBitField.Flags.ManageChannels)) {  // Require Manage Channels permission
+
+            // Check for existing settings
+            const server = await schemaServer.findOne({ guildId: interaction.guild.id})
+
+            if (server) { // if exists
+
             const categorysetup = new ModalBuilder()
 			.setCustomId('categorysetup')
 			.setTitle('Ticket Category Setup');
 
-		    const category = new TextInputBuilder()
+		    const newticketcategory = new TextInputBuilder()
 			.setCustomId('category')   
-			.setLabel("Ticket Category's id")
-			.setStyle(TextInputStyle.Short);
+			.setLabel("New Ticket Category ID")
+			.setStyle(TextInputStyle.Short)
+            .setRequired(false);
 
-            const firstActionRow = new ActionRowBuilder().addComponents(category);
-            categorysetup.addComponents(firstActionRow)
+            const newLogsChannel = new TextInputBuilder()
+            .setCustomId('logs')   
+			.setLabel("New Ticket Logs Channlel ID")
+			.setStyle(TextInputStyle.Short)
+            .setRequired(false);
 
-            await interaction.showModal(categorysetup)
+            const firstActionRow = new ActionRowBuilder().addComponents(newticketcategory);
+            const secondActionRow = new ActionRowBuilder().addComponents(newLogsChannel);
+            categorysetup.addComponents(firstActionRow, secondActionRow)
+
+            await interaction.showModal(categorysetup) 
+
+            } else { // if doesn't exist, create new database
+
+                try {
+
+                    // Create Ticket Category
+        
+                    const ticketcategory = await interaction.guild.channels.create({
+                        name: "Kanou's ModMail",
+                        type: ChannelType.GuildCategory,
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id, // @everyone role
+                                deny: [PermissionsBitField.Flags.ViewChannel] // disable view messages permission 
+                            },
+
+                            {
+                                id: interaction.guild.members.me.id, // application permission - Not application's role
+                                allow: [
+                                    PermissionsBitField.Flags.ViewChannel, 
+                                    PermissionsBitField.Flags.SendMessages, 
+                                    PermissionsBitField.Flags.ManageChannels, 
+                                    PermissionsBitField.Flags.ManageMessages
+                                    ]
+                            }
+                        ]
+                    })
+
+                    //Create logs channel inside Ticket Category    
+                    const logschannel = await interaction.guild.channels.create({
+        
+                        name: "ticket-logs",
+                        type: ChannelType.GuildText,
+                        parent: ticketcategory.id,
+                    })
+                
+                        await logschannel.lockPermissions() // Sync perm with Category
+        
+                        await schemaServer.create({ guildId: interaction.guild.id, categoryId: ticketcategory.id, appstatus: "Online", logsChannelID: logschannel.id, prefix: `.`})
+        
+                        const created = new EmbedBuilder()
+                        .setColor("Green")
+                        .setDescription(`The application has completed its setup process. You may view your server configurations using \`/ticket configs\` command. If you need any further assistance, please contact the development team.`)
+                        interaction.reply(
+                        { embeds: [created], flags: 64}
+                    )
+
+                    } catch (error) {
+        
+                        const errormsg = new EmbedBuilder()
+                        .setColor("Red")
+                        .setDescription("Unable to setup the ticket category. An error has occurred, please report this to the server moderation team.")
+                        .addFields(
+                            { name: "\n", value: "> The application has not been properly setup for this server. For further assistance, please contact the development team." }
+                        )
+                        .setFooter(
+                            { text: "If you think this is an error, please contact the development team immediately." }
+                        );
+                        interaction.reply({
+                            embeds: [errormsg], flags: 64
+                        })
+        
+                        console.log("There was an error setting up the ticket category and its logs-channel", error)
+                    }    
+            }
 
         } else { // Invalid Permission
 
@@ -126,42 +209,30 @@ module.exports = {
             interaction.reply({embeds: [invalid], flags: 64})
             }
 
-        } else if (option == "whitelist") {
+        } else if (option == "configs") {
 
-            if (interaction.memberPermissions.has(PermissionsBitField.Flags.ManageRoles)) { // Require Manage Roles permission
+            if (interaction.memberPermissions.has(PermissionsBitField.Flags.ManageChannels)) { // Require Manage Channels permission
                 
                 const server = await schemaServer.findOne({ guildId: interaction.guild.id})
-                const roles = server.allowedRoles.map(roleId => `<@&${roleId}>`).join(", ") 
+                const logsid = server.logsChannelID
+                const categoryid = server.categoryId
+                const category = interaction.guild.channels.cache.get(categoryid)
+                const prefix = server.prefix
 
-                if (server.allowedRoles == "") {
-                
-                const whitelist = new EmbedBuilder()
+                const configs = new EmbedBuilder()
                 .setColor(config.defaultclr)
-                .setTitle(`Whitelist Management`)
-                .setDescription(`Add or Remove roles that are allowed to view ticket channels and respond to them.`)
+                .setTitle("**Kanou's ModMail Configurations**")
+                .setDescription("All information and settings can be found below. As of now, there are only two options can be changed (ticket-logs channel and ticket category).")
                 .addFields(
-                    {name: `\n`, value: "> The list is empty, start by adding a role!"},
+                    {name: "\n", value: `> **Ticket Category**\n> ** **\n> \`${category.name}\`\n> (${categoryid})`, inline: true},
+                    {name: "\n", value: `> **Ticket Logs Channel**\n> ** **\n> <#${logsid}>\n> (${logsid})`, inline: true},
+                    {name: "\n", value: `> **Server Prefix**\n> ** **\n> \`${prefix}\``, inline: true},
                 )
 
-                interaction.reply(
-
-                    { embeds: [whitelist]}
-                )
-
-            } else {
-
-                const whitelist = new EmbedBuilder()
-                .setColor(config.defaultclr)
-                .setTitle(`Whitelisted Roles`)
-                .setDescription(`Add or Remove roles that are allowed to view ticket channels and respond to them.`)
-                .addFields(
-                    {name: `\n`, value: `> ${roles}`},
-                )
-
-                interaction.reply(
-                    { embeds: [whitelist]}
-                )
-            }
+                interaction.reply({
+                    embeds: [configs],
+                    flags: 64
+                })
 
             } else { // Invalid Permission
 

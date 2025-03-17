@@ -348,6 +348,9 @@ async function loadMenu(interaction, client) {
                         if (logs_channelID) {
 
                         const logs_channel = guild.channels.cache.get(logs_channelID)
+
+                        if (logs_channel) {
+
                         var time = new Date();
                         const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
 
@@ -365,6 +368,12 @@ async function loadMenu(interaction, client) {
                             embeds: [newTicket],
 
                         })
+
+                    } else {
+
+                        console.log("Error, logs-channel does not exist. This action is not saved")
+
+                    }
 
                         } else {
 
