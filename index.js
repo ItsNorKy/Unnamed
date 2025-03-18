@@ -2,7 +2,6 @@ const { Client, GatewayIntentBits, Partials, Collection} = require("discord.js")
 const { Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent } = GatewayIntentBits
 const { User, Message, GuildMember, Channel } = Partials
 require("dotenv").config()
-const token = process.env.TOKEN;
 
 const client = new Client({
   intents: [Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent],
@@ -23,4 +22,5 @@ connectDB()
 
 module.exports = { client }
 
-client.login(token)
+client.login(process.env.TOKEN).then(() => console.log("Bot is online!"))
+.catch(err => console.error("Login Error:", err));
