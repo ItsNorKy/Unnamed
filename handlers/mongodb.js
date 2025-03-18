@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
-
 const mongopassword = process.env.MONGODB_PASSWORD;
 const mongousername = process.env.MONGODB_USERNAME;
 const uri = `mongodb+srv://${mongousername}:${mongopassword}@kanou.ixlik.mongodb.net/Kanou?retryWrites=true&w=majority&appName=Kanou`;

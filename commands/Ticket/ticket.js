@@ -1,7 +1,9 @@
-const { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionsBitField, ChannelType, Events, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelSelectMenuBuilder } = require("discord.js")
+const { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, PermissionsBitField, ChannelType, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require("discord.js")
 const config = require("../../config.json")
 const schemaServer = require("../../schemas/schemaServer")
 const userTicket = require("../../schemas/userTicket")
+const logMessages = require("../../handlers/logMessages")
+const fs = require("fs")
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,11 +25,6 @@ module.exports = {
      * @param {ChatInputCommandInteraction} interaction
      */
     async execute (interaction, client) {
-
-        // Global define
-
-        const authorid = interaction.member.id // Command user's id
-        const author = interaction.member // Command user
 
         // Setup ticket listening channel
         const option = interaction.options.getString("options")
@@ -56,8 +53,8 @@ module.exports = {
           .setTitle("**Ticket Closed**")
           .setDescription(`Your ticket has been closed. You may submit a new ticket if you have any questions.`)
           .setFooter({
-           iconURL: interaction.member.user.avatarURL(),
-           text: `${interaction.member.user.username} (${interaction.member.user.id}) - Today at ${now}`
+           iconURL: ticketauthor.avatarURL(),
+           text: `${ticketauthor.username} (${ticketauthor.id}) - Today at ${now}`
           })
 
           ticketauthor.send({
@@ -79,24 +76,36 @@ module.exports = {
 
             await interaction.deferReply()
             await interaction.deleteReply()
+
+            // Generate log file
+            const filePath = await logMessages(interaction.client, channel.id);
+
+            if (!filePath || !fs.existsSync(filePath)) {
+            console.error(`Log file not found: ${filePath}`);
+            return;
+            }
+
             const logged = new EmbedBuilder()
                .setColor("Red")
-               .setTitle("**Ticket Closed**")
+               .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL()})
+               .setTitle("Ticket Closed")
                .setDescription(`<@${interaction.member.user.id}> has closed a ticket \`#${channel.name}\``)
                .setFooter({
-                iconURL: interaction.member.user.avatarURL(),
-                text: `${interaction.member.user.username} (${interaction.member.user.id}) - Today at ${now}`
+                iconURL: ticketauthor.avatarURL(),
+                text: `${ticketauthor.username} (${ticketauthor.id}) - Today at ${now}`
                })
 
-               log_channel.send({
+               const messageOptions = { embeds: [logged] };
+               if (filePath && fs.existsSync(filePath)) { // Check if file exists before attaching
+                    messageOptions.files = [new AttachmentBuilder(filePath)];
+                }
 
-                   embeds: [logged],
-
-               }).then(async () => {
+                log_channel.send(messageOptions).then(async () => {
 
                 await userTicket.deleteOne({ ticketChannelId: interaction.channel.id }); // Deletes the exact ticket entry
                 await interaction.channel.delete()
 
+                fs.unlinkSync(filePath) // delete log file after sending
                })
 
           } else {

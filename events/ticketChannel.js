@@ -1,7 +1,6 @@
 const { EmbedBuilder } = require("discord.js")
 const userTicket = require("../schemas/userTicket")
 
-
 module.exports = {
     name: "messageCreate",
     once: false,
@@ -10,6 +9,7 @@ module.exports = {
 
         if (message.author.bot) return;
         if (message.channel.isDMBased()) return;
+        if (message.content.startsWith(".")) return; // placeholder for server prefix (using global prefix "." for now)
 
         const server = await userTicket.findOne({ guildId: message.guild.id, ticketChannelId: message.channel.id });    
 
@@ -42,6 +42,8 @@ module.exports = {
                 } else {
                 formattedTime = `${messageTime.toLocaleDateString('en-US')} at ${messageTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
                 }   
+
+            await message.delete() // Remove message in channel
                    
             // Server Side
             const msg2embed = new EmbedBuilder()
@@ -68,8 +70,6 @@ module.exports = {
             await ticketauthor.send({
                 embeds: [received]
             })
-
-            await message.delete()
 
             } catch (error) {
 

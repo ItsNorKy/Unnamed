@@ -122,7 +122,7 @@ async function loadMenu(interaction, client) {
                 .setThumbnail(`${DevSV.iconURL()}`)
                 .setDescription(`Successfully created a ticket for \`${DevSV}\`. Please wait for a staff member to respond to your ticket.`)
                 .addFields(
-                    { name: "**Please note:**", value: `- There will be a minimum of 10 seconds cooldown per message, please keep the conversation civilized and respect other party.\n- Staff members reserve the rights to close, freeze and block your ticket.\n- For technical problems regarding the application, please contact the development team.`},
+                    { name: "**Please note:**", value: `- There will be a minimum of 10 seconds cooldown per message, please keep the conversation civilized and respect other party.\n- Staff members reserve the rights to close your ticket.\n- For technical problems regarding the application, please contact the development team.`},
                 )
                 .setFooter({
                     text: "All messages from this ticket will be monitored or logged for development purposes."
@@ -136,7 +136,7 @@ async function loadMenu(interaction, client) {
                 const successfulConnection = new EmbedBuilder()
                 .setColor(config.defaultclr)
                 .setTitle("**New Ticket Received**")
-                .setDescription("A new ticket has been created. To respond, type a message in this channel. Messages containing global prefix `.` are ignored, and will not be sent. Staff members may close, freeze, resume the ticket using the available ticket commands.")
+                .setDescription("A new ticket has been created. To respond, type a message in this channel. Messages containing global prefix `.` are ignored, and will not be sent. Staff members may close the ticket using the available ticket commands.")
                 .addFields(
                     { name: "\n", value: `> **User**\n> ** **\n> <@${interaction.user.id}>\n> (${interaction.user.id})`, inline: true},
                     { name: "\n", value: `> **Roles**\n> ** **\n> ${userRoles}`, inline: true}
