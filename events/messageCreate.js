@@ -2,13 +2,14 @@ const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, Ac
 const config = require("../config.json")
 const servers = require("../servers.json")
 const cooldown = new Map()
-const selected = require("../utilities/selected")
+const userTicket = require("../schemas/userTicket")
+
 
 module.exports = {
     name: "messageCreate",
     once: false,
 
-    execute(message, client) {
+    async execute(message, client) {
 
         if (message.author.bot) return;
 
@@ -33,10 +34,89 @@ module.exports = {
 
             cooldown.set(userId, Date.now() + cooldownTime);
             setTimeout(() => cooldown.delete(userId), cooldownTime);
+            const usertk = await userTicket.findOne({ userId: userId})
 
-            if (selected.has(userId)) {
-                console.log(`[INFO] User ${userId} already selected a server. Ignoring.`);
-                return; 
+            if (usertk) { 
+
+                const guild = client.guilds.cache.get(usertk.guildId)
+                const ticketchannel = await guild.channels.fetch(usertk.ticketChannelId).catch(() => null);
+
+                if (!guild) {
+                    console.error(`Guild ${usertk.guildId} not found.`);
+                    return;
+                }
+
+                if (!ticketchannel) {
+                    
+                    await userTicket.deleteMany({ userId: message.author.id })
+
+                    const noChnnel = new EmbedBuilder()
+                    .setColor("Red")
+                    .setDescription("Unable to establish connection to the selected server. An error has occurred, please report this to the server moderation team.")
+                    .addFields(
+                        { name:"\n", value: `> Ticket channel has been deleted or closed unexpectedly. User may submit a new ticket.`}
+                    )
+                    .setFooter(
+                        { text: "If you think this is an error, please contact the development team immediately." }
+                    );
+                    message.author.send({
+                        embeds: [noChnnel]
+                    })
+                    
+                    console.error(`Deleting previous data of ${message.author.id}.`);
+                    return;
+                }
+                // timeNow()
+                const now = new Date();
+                const messageTime = new Date(message.createdTimestamp); // Message timestamp
+
+                const timeDiff = now - messageTime; // Difference in milliseconds
+                const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
+
+                let formattedTime;
+
+                if (timeDiff < oneDay && now.getDate() === messageTime.getDate()) {
+    
+                formattedTime = `Today at ${messageTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+                } else if (timeDiff < 2 * oneDay && now.getDate() - messageTime.getDate() === 1) {
+
+                formattedTime = `Yesterday at ${messageTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+                } else {
+                formattedTime = `${messageTime.toLocaleDateString('en-US')} at ${messageTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+                }   
+                
+                //user message recorded
+                const recorded = new EmbedBuilder()
+                .setColor("Green")
+                .setTitle("**Message Sent**")
+                .setDescription(message.content)
+                .setFooter({
+                    iconURL: message.author.avatarURL(),
+                    text: `${message.author.tag} (${message.author.id}) - ${formattedTime}` 
+                });
+
+                await message.author.send({
+                    embeds: [recorded]
+                })
+                
+                // sending  to sv
+                const ticket = new EmbedBuilder()
+                .setColor("Green")
+                .setTitle("**Message Received**")
+                .setDescription(message.content)
+                .setFooter({
+                    iconURL: message.author.avatarURL(),
+                    text: `${message.author.tag} (${message.author.id}) - ${formattedTime}` 
+                });
+
+                await ticketchannel.send({
+                    embeds: [ticket]
+                })
+
+                console.log("Cancelled sending selection menu as the ticket is ongoing")
+
+                return;
+
             }
 
             // Select Server
@@ -80,6 +160,4 @@ module.exports = {
 }
 
 
-// To be implemented:
-// Schema / Mongoose Database for storing User's Server Data
  

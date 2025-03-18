@@ -1,8 +1,8 @@
 const { EmbedBuilder, PermissionsBitField, ChannelType } = require("discord.js")
 const config = require("../config.json")
 const servers = require("../servers.json")
-const selected = require("../utilities/selected")
 const schemaServer = require("../schemas/schemaServer")
+const userTicket = require("../schemas/userTicket")
 
 async function loadMenu(interaction, client) {
 
@@ -15,11 +15,12 @@ async function loadMenu(interaction, client) {
     const DevSVID = servers.Dev_Server
     const JXNDID = servers.JaxinaDomain
     const selectedValue = interaction.values[0];
+
     let success
 
     if (selectedValue === "devsv") {
         
-        const server = await schemaServer.findOne({ guildId: DevSV })
+        const server = await schemaServer.findOne({ guildId: DevSVID })
 
         if (!server) {
 
@@ -48,8 +49,7 @@ async function loadMenu(interaction, client) {
             return interaction.reply({embeds: [invalid], flags: 64})
         }
             
-            const guild = client.guilds.cache.get(server.guildId)  
-
+            const guild = await client.guilds.fetch(server.guildId)
             const x = await guild.channels.fetch()
             const channel = [...x.values()].find(c => c.name === interaction.user.username);
 
@@ -68,7 +68,7 @@ async function loadMenu(interaction, client) {
 
             try {
 
-              await guild.channels.create({
+                const newTicketCN = await guild.channels.create({
                     name: interaction.user.username,
                     type: ChannelType.GuildText,
                     parent: server.categoryId,
@@ -88,9 +88,9 @@ async function loadMenu(interaction, client) {
                         deny: [PermissionsBitField.Flags.ViewChannel],
                     }
                 ]
-            }).then(async (a) => {
+            })
 
-                const member = await guild.members.fetch(interaction.user.id).catch(() => null);
+                const member = await guild.members.fetch(interaction.user.id).catch(() => null)
 
                 if (!member) {
                     const invalid = new EmbedBuilder()
@@ -103,6 +103,13 @@ async function loadMenu(interaction, client) {
                     console.log("Unable to fetch user's roles")
                     return interaction.reply({embeds: [invalid], flags: 64})
                 }
+
+                await userTicket.create({ // generate data for user's ticket
+                    userId: interaction.user.id,
+                    guildId: server.guildId, 
+                    categoryId: server.categoryId,   
+                    ticketChannelId: newTicketCN.id,                                                                       
+                })
 
                 const userRoles = member.roles.cache
                 .filter(role => role.id !== guild.id) // Exclude @everyone role
@@ -124,24 +131,21 @@ async function loadMenu(interaction, client) {
                 await interaction.update({
                     embeds: [success],
                     components: [] 
-                })
-
-                selected.add(interaction.user.id);
-                console.log(`[INFO] User ${interaction.user.id} added to selected`)
+                })               
 
                 const successfulConnection = new EmbedBuilder()
                 .setColor(config.defaultclr)
                 .setTitle("**New Ticket Received**")
                 .setDescription("A new ticket has been created. To respond, type a message in this channel. Messages containing global prefix `.` are ignored, and will not be sent. Staff members may close, freeze, resume the ticket using the available ticket commands.")
                 .addFields(
-                    { name: "\n", value: `> **User**\n> ** **\n> <@${interaction.user.id}>\n> ** **\n> (${interaction.user.id})`, inline: true},
+                    { name: "\n", value: `> **User**\n> ** **\n> <@${interaction.user.id}>\n> (${interaction.user.id})`, inline: true},
                     { name: "\n", value: `> **Roles**\n> ** **\n> ${userRoles}`, inline: true}
                 )
                 .setFooter({
                     text: "All messages from this ticket will be monitored or logged for development purposes."
                 })
 
-                a.send({
+                newTicketCN.send({
                     embeds: [successfulConnection]
                 }).then(async () => {
 
@@ -153,6 +157,7 @@ async function loadMenu(interaction, client) {
                         if (logs_channelID) {
 
                         const logs_channel = guild.channels.cache.get(logs_channelID)
+
                         var time = new Date();
                         const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
 
@@ -191,7 +196,6 @@ async function loadMenu(interaction, client) {
                         console.log("Error occured when logging", error)
                     }
                 })
-            })
 
         } catch(error) {
 
@@ -243,8 +247,7 @@ async function loadMenu(interaction, client) {
             return interaction.reply({embeds: [invalid], flags: 64})
         }
             
-            const guild = client.guilds.cache.get(server.guildId)  
-
+            const guild = await client.guilds.fetch(server.guildId)
             const x = await guild.channels.fetch()
             const channel = [...x.values()].find(c => c.name === interaction.user.username);
 
@@ -263,7 +266,7 @@ async function loadMenu(interaction, client) {
 
             try {
 
-              await guild.channels.create({
+              const newTicketCN = await guild.channels.create({
                     name: interaction.user.username,
                     type: ChannelType.GuildText,
                     parent: server.categoryId,
@@ -283,7 +286,14 @@ async function loadMenu(interaction, client) {
                         deny: [PermissionsBitField.Flags.ViewChannel],
                     }
                 ]
-            }).then(async (a) => {
+            })
+
+            await userTicket.create({ // generate data for user's ticket
+                userId: interaction.user.id,
+                guildId: server.guildId, 
+                categoryId: server.categoryId,   
+                ticketChannelId: newTicketCN.id,                                                                       
+            })
 
                 const member = await guild.members.fetch(interaction.user.id).catch(() => null);
 
@@ -321,9 +331,6 @@ async function loadMenu(interaction, client) {
                     components: [] 
                 })
 
-                selected.add(interaction.user.id);
-                console.log(`[INFO] User ${interaction.user.id} added to selected`)
-
                 const successfulConnection = new EmbedBuilder()
                 .setColor(config.defaultclr)
                 .setTitle("**New Ticket Received**")
@@ -336,7 +343,7 @@ async function loadMenu(interaction, client) {
                     text: "All messages from this ticket will be monitored or logged for development purposes."
                 })
 
-                a.send({
+                newTicketCN.send({
                     embeds: [successfulConnection]
                 }).then(async () => {
 
@@ -349,7 +356,7 @@ async function loadMenu(interaction, client) {
 
                         const logs_channel = guild.channels.cache.get(logs_channelID)
 
-                        if (logs_channel) {
+                        if (logs_channel) { 
 
                         var time = new Date();
                         const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
@@ -395,7 +402,6 @@ async function loadMenu(interaction, client) {
                         console.log("Error occured when logging", error)
                     }
                 })
-            })
 
         } catch(error) {
 
@@ -417,6 +423,6 @@ async function loadMenu(interaction, client) {
     }
 }
 
-module.exports = { loadMenu, selected };
+module.exports = { loadMenu };
 
 

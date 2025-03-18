@@ -1,2 +1,2 @@
-const selected = new Set(); 
-module.exports = selected;
+    const selected = new Map(); 
+    module.exports = selected;

@@ -1,7 +1,7 @@
 const { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionsBitField, ChannelType, Events, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelSelectMenuBuilder } = require("discord.js")
 const config = require("../../config.json")
-const { getAllowedRoles, removeAllowedRole, addAllowedRole } = require("../../handlers/whitelist")
 const schemaServer = require("../../schemas/schemaServer")
+const userTicket = require("../../schemas/userTicket")
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,7 +22,7 @@ module.exports = {
     /**
      * @param {ChatInputCommandInteraction} interaction
      */
-    async execute (interaction) {
+    async execute (interaction, client) {
 
         // Global define
 
@@ -38,18 +38,45 @@ module.exports = {
 
           if (server) {
 
+          const userTK = await userTicket.findOne({ guildId: interaction.guild.id, ticketChannelId: interaction.channel.id})
+
+          if (!userTK) return;
+
+          const ticketauthor = await interaction.client.users.fetch(userTK.userId)
           const ticket_category_id = server.categoryId
           const ticket_logs_id = server.logsChannelID
           const log_channel = interaction.guild.channels.cache.get(ticket_logs_id)
 
+          //Sending to user for closed ticket
+          var time = new Date();
+          const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+
+          const closed = new EmbedBuilder()
+          .setColor("Red")
+          .setTitle("**Ticket Closed**")
+          .setDescription(`Your ticket has been closed. You may submit a new ticket if you have any questions.`)
+          .setFooter({
+           iconURL: interaction.member.user.avatarURL(),
+           text: `${interaction.member.user.username} (${interaction.member.user.id}) - Today at ${now}`
+          })
+
+          ticketauthor.send({
+
+              embeds: [closed],
+
+          })
+
+          // Logging
           if (log_channel) {
 
           let ticket_channel = interaction.channel.parentId
 
           if (ticket_channel === ticket_category_id && interaction.channel.id != ticket_logs_id) { // Check if the command is being executed inside the assigned ticket category and excluding ticket-logs channel (this is to avoid deleting the logs channel)
-            let channel = interaction.guild.channels.cache.find(channel => channel.name === interaction.user.username)
+            let channel = interaction.channel; 
+
             var time = new Date();
             const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+
             await interaction.deferReply()
             await interaction.deleteReply()
             const logged = new EmbedBuilder()
@@ -67,7 +94,8 @@ module.exports = {
 
                }).then(async () => {
 
-               await interaction.channel.delete()
+                await userTicket.deleteOne({ ticketChannelId: interaction.channel.id }); // Deletes the exact ticket entry
+                await interaction.channel.delete()
 
                })
 

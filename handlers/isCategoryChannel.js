@@ -5,6 +5,7 @@ const { ChannelType, Guild } = require("discord.js")
  * @param { Guild } guild 
  * @param { String } channelId 
  * @returns { Promise<boolean> } 
+ * 
  */
 
 async function isCategoryChannel(guild, channelId) {
