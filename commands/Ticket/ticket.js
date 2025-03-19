@@ -68,7 +68,7 @@ module.exports = {
 
           let ticket_channel = interaction.channel.parentId
 
-          if (ticket_channel === ticket_category_id && interaction.channel.id != ticket_logs_id) { // Check if the command is being executed inside the assigned ticket category and excluding ticket-logs channel (this is to avoid deleting the logs channel)
+          if (ticket_channel === ticket_category_id && interaction.channel.id !== ticket_logs_id || interaction.channel.id !== "1351789585797091349") { // Check if the command is being executed inside the assigned ticket category and excluding ticket-logs channel (this is to avoid deleting the logs channel)
             let channel = interaction.channel; 
 
             var time = new Date();
