@@ -136,7 +136,7 @@ async function loadMenu(interaction, client) {
                 const successfulConnection = new EmbedBuilder()
                 .setColor(config.defaultclr)
                 .setTitle("**New Ticket Received**")
-                .setDescription("A new ticket has been created. To respond, type a message in this channel. Messages containing global prefix `.` are ignored, and will not be sent. Staff members may close the ticket using the available ticket commands.")
+                .setDescription("A new ticket has been created. To respond, type a message in this channel. Messages containing global prefix `.` are ignored, and will not be sent. Staff members may close the ticket using `/ticket close` command.")
                 .addFields(
                     { name: "\n", value: `> **User**\n> ** **\n> <@${interaction.user.id}>\n> (${interaction.user.id})`, inline: true},
                     { name: "\n", value: `> **Roles**\n> ** **\n> ${userRoles}`, inline: true}
