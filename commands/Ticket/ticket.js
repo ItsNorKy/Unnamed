@@ -45,8 +45,7 @@ module.exports = {
           const log_channel = interaction.guild.channels.cache.get(ticket_logs_id)
 
           //Sending to user for closed ticket
-          var time = new Date();
-          const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+          const now = new Date();
 
           const closed = new EmbedBuilder()
           .setColor("Red")
@@ -54,8 +53,9 @@ module.exports = {
           .setDescription(`Your ticket has been closed. You may submit a new ticket if you have any questions.`)
           .setFooter({
            iconURL: ticketauthor.avatarURL(),
-           text: `${ticketauthor.username} (${ticketauthor.id}) - Today at ${now}`
+           text: `${ticketauthor.username} (${ticketauthor.id})`
           })
+          .setTimestamp(now);
 
           ticketauthor.send({
 
@@ -71,8 +71,7 @@ module.exports = {
           if (ticket_channel === ticket_category_id && interaction.channel.id !== ticket_logs_id || interaction.channel.id !== "1351789585797091349") { // Check if the command is being executed inside the assigned ticket category and excluding ticket-logs channel (this is to avoid deleting the logs channel)
             let channel = interaction.channel; 
 
-            var time = new Date();
-            const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+            const now = new Date();
 
             await interaction.deferReply()
             await interaction.deleteReply()
@@ -92,8 +91,9 @@ module.exports = {
                .setDescription(`<@${interaction.member.user.id}> has closed a ticket \`#${channel.name}\``)
                .setFooter({
                 iconURL: ticketauthor.avatarURL(),
-                text: `${ticketauthor.username} (${ticketauthor.id}) - Today at ${now}`
+                text: `${ticketauthor.username} (${ticketauthor.id})`
                })
+               .setTimestamp(now)
 
                const messageOptions = { embeds: [logged] };
                if (filePath && fs.existsSync(filePath)) { // Check if file exists before attaching
