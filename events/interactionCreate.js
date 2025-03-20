@@ -18,17 +18,11 @@ module.exports = {
 
             if (interaction.isChatInputCommand()) {
                 const command = client.commands.get(interaction.commandName);
-                if (!command) {
-                    return interaction.reply({
-                        content: "Command is outdated",
-                        ephemeral: true,
-                    });
-                }
 
                 if (command.developer && interaction.user.id !== "590827375189557259") {
                     return interaction.reply({
                         content: "Insufficient permission to execute this command",
-                        ephemeral: true,
+                        flags: 64,
                     });
                 }
 

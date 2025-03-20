@@ -315,7 +315,7 @@ async function loadMenu(interaction, client) {
                 .setThumbnail(`${JXND.iconURL()}`)
                 .setDescription(`Successfully created a ticket for \`${JXND}\`. Please wait for a staff member to respond to your ticket.`)
                 .addFields(
-                    { name: "**Please note:**", value: `- There will be a minimum of 10 seconds cooldown per message, please keep the conversation civilized and respect other party.\n- Staff members reserve the rights to close, freeze and block your ticket.\n- For technical problems regarding the application, please contact the development team.`},
+                    { name: "**Please note:**", value: `- There will be a minimum of 10 seconds cooldown per message, please keep the conversation civilized and respect other party.\n- Staff members reserve the rights to close your ticket.\n- For technical problems regarding the application, please contact the development team.`},
                 )
                 .setFooter({
                     text: "All messages from this ticket will be monitored or logged for development purposes."
@@ -353,8 +353,7 @@ async function loadMenu(interaction, client) {
 
                         if (logs_channel) { 
 
-                        var time = new Date();
-                        const now = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+                        const now = new Date();
 
                         const newTicket = new EmbedBuilder()
                         .setColor("Green")
@@ -362,8 +361,10 @@ async function loadMenu(interaction, client) {
                         .setDescription(`<@${interaction.user.id}> has created a ticket`)
                         .setFooter({
                             iconURL: interaction.user.avatarURL(),
-                            text: `${interaction.user.username} (${interaction.user.id}) - Today at ${now}`
+                            text: `${interaction.user.username} (${interaction.user.id})`
                         })
+                        .setTimestamp(now)
+                        
 
                         logs_channel.send({
 

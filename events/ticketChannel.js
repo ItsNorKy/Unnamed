@@ -26,22 +26,6 @@ module.exports = {
             try {
 
                 const now = new Date();
-                const messageTime = new Date(message.createdTimestamp); // Message timestamp
-
-                const timeDiff = now - messageTime; // Difference in milliseconds
-                const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
-
-                let formattedTime;
-
-                if (timeDiff < oneDay && now.getDate() === messageTime.getDate()) {
-    
-                formattedTime = `Today at ${messageTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
-                } else if (timeDiff < 2 * oneDay && now.getDate() - messageTime.getDate() === 1) {
-
-                formattedTime = `Yesterday at ${messageTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
-                } else {
-                formattedTime = `${messageTime.toLocaleDateString('en-US')} at ${messageTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
-                }   
 
             await message.delete() // Remove message in channel
                    
@@ -52,8 +36,10 @@ module.exports = {
             .setDescription(message.content)
             .setFooter({
                 iconURL: message.author.avatarURL(),
-                text: `${message.author.tag} (${message.author.id}) - ${formattedTime}` 
-            });
+                text: `${message.author.tag} (${message.author.id})` 
+            })
+            .setTimestamp(now);
+
             await ticketchannel.send({
                 embeds: [msg2embed]
             })
@@ -65,8 +51,9 @@ module.exports = {
             .setDescription(message.content)
             .setFooter({
                 iconURL: message.author.avatarURL(),
-                text: `${message.author.tag} (${message.author.id}) - ${formattedTime}` 
-            });
+                text: `${message.author.tag} (${message.author.id})` 
+            })
+            .setTimestamp(now);
             await ticketauthor.send({
                 embeds: [received]
             })
