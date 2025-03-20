@@ -272,11 +272,6 @@ async function loadMenu(interaction, client) {
                     parent: server.categoryId,
                     permissionOverwrites: [
                     {
-                        id: interaction.user.id,
-                        allow: [PermissionsBitField.Flags.ViewChannel],
-                    },
-
-                    {
                         id: guild.members.me.id,
                         allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ManageMessages],
                     },
