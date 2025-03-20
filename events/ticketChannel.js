@@ -50,8 +50,8 @@ module.exports = {
             .setTitle("**Message Received**")
             .setDescription(message.content)
             .setFooter({
-                iconURL: message.author.avatarURL(),
-                text: `${message.author.tag} (${message.author.id})` 
+                iconURL: `https://cdn-icons-png.flaticon.com/512/666/666175.png`,
+                text: `Anonymous User` 
             })
             .setTimestamp(now);
             await ticketauthor.send({
