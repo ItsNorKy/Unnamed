@@ -18,8 +18,11 @@ async function extractMessages(filePath) {
                 return parts.length > 1 ? parts.slice(1).join(': ') : null;
             })
             .filter(msg => msg !== null && msg.trim() !== ""); // Remove empty messages
+            
+            const formattedMessages = messages.map(msg => ({ role: "user", content: msg }));
 
-        return messages;
+        return formattedMessages;
+
     } catch (err) {
         console.error('Error reading log file:', err);
         return [];
