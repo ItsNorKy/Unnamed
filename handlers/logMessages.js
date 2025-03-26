@@ -8,25 +8,31 @@ async function logMessages(client, channelId) {
         return null;
     }
 
-    let messages = await channel.messages.fetch({ limit: 100 });
+    let messages = new Map();
+    let lastMessageId = null;
 
-    let sortedMessages = messages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+    while (true) {
+        const fetched = await channel.messages.fetch({ limit: 100, before: lastMessageId });
+        if (fetched.size === 0) break; //stop when no more messages are found
 
+        fetched.forEach(msg => messages.set(msg.id, msg));
+        lastMessageId = fetched.lastKey(); 
+
+        await new Promise(resolve => setTimeout(resolve, 1000)); // prevent rate limits
+    }
+
+    let sortedMessages = [...messages.values()].sort((a, b) => a.createdTimestamp - b.createdTimestamp);
     let logData = '';
 
     sortedMessages.forEach(msg => {
         let timestamp = msg.createdAt.toISOString().replace('T', ' ').split('.')[0]; // Format: YYYY-MM-DD HH:MM:SS
-        let userTag = null;
+        let userTag = msg.author ? msg.author.tag : 'Unknown User';
 
         if (msg.embeds.length > 0) {
             const embed = msg.embeds[0];
             if (embed.footer && embed.footer.text) {
                 userTag = embed.footer.text.split(' (')[0];
             }
-        }
-
-        if (!userTag) {
-            userTag = msg.author.tag;
         }
 
         if (msg.content) {
@@ -63,6 +69,7 @@ async function logMessages(client, channelId) {
 }
 
 module.exports = logMessages;
+
 
 
 

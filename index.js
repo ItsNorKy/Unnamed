@@ -24,3 +24,4 @@ module.exports = { client }
 
 client.login(process.env.TOKEN).then(() => console.log("Bot is online!"))
 .catch(err => console.error("Login Error:", err));
+

@@ -1,4 +1,4 @@
-const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder } = require("discord.js")
+const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, AttachmentBuilder } = require("discord.js")
 const config = require("../config.json")
 const servers = require("../servers.json")
 const cooldown = new Map()
@@ -66,6 +66,29 @@ module.exports = {
                     console.error(`Deleting previous data of ${message.author.id}.`);
                     return;
                 }
+                //-----------------------------------------------------------------------------------------------------------------------
+
+                // Attachments
+                const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
+                const attachmentsArray = [...message.attachments.values()];
+                // Separate oversized and normal attachments
+                const oversizedFiles = attachmentsArray.filter(att => att.size > MAX_FILE_SIZE);
+                const validFiles = attachmentsArray.filter(att => att.size <= MAX_FILE_SIZE);
+
+
+                if (oversizedFiles.length > 0) {
+                    const oversized = new EmbedBuilder()
+                    .setColor("Red")
+                    .setDescription("Unable to send the message. An error has occurred, details can be found below:")
+                    .addFields(
+                        {name: "\n", value: "> The file size exceeds Discord Upload Limits (8 MB), please try again"}
+                    )
+                    await message.author.send({embeds: [oversized]})
+                    return;
+                }
+
+                const attachmentLinks = validFiles.map(att => `[${att.name}](${att.url})`).join("\n");
+
                 // timeNow()
                 const now = new Date();
                 
@@ -73,31 +96,50 @@ module.exports = {
                 const recorded = new EmbedBuilder()
                 .setColor("Green")
                 .setTitle("**Message Sent**")
-                .setDescription(message.content)
+                .setDescription(message.content ? message.content : "`Empty Message`")
                 .setFooter({
                     iconURL: message.author.avatarURL(),
                     text: `${message.author.tag} (${message.author.id})` 
                 })
                 .setTimestamp(now)
 
+                if (attachmentLinks.length > 0) {
+                    recorded.addFields({
+                        name: "**Attachments**",
+                        value: attachmentLinks,
+                        inline: false
+                    });
+                }
+
                 await message.author.send({
-                    embeds: [recorded]
-                })
+                    embeds: [recorded],
+                    files: validFiles.map(att => ({ attachment: att.url, name: att.name }))
+                });
                 
                 // sending  to sv
                 const ticket = new EmbedBuilder()
                 .setColor("Green")
                 .setTitle("**Message Received**")
-                .setDescription(message.content)
+                .setDescription(message.content ? message.content : "`Empty Message`")
                 .setFooter({
                     iconURL: message.author.avatarURL(),
                     text: `${message.author.tag} (${message.author.id})` 
                 })
                 .setTimestamp(now);
 
+                if (attachmentLinks.length > 0) {
+                    ticket.addFields({
+                        name: "**Attachments**",
+                        value: attachmentLinks,
+                        inline: false
+                    });
+                }
+
                 await ticketchannel.send({
-                    embeds: [ticket]
-                })
+                    embeds: [ticket],
+                    files: validFiles.map(att => ({ attachment: att.url, name: att.name }))
+                });
+            
 
                 console.log("Cancelled sending selection menu as the ticket is ongoing")
 
