@@ -11,9 +11,9 @@ async function loadMenu(interaction, client) {
     if (interaction.customId !== "servers") return; 
 
     const DevSV = client.guilds.cache.get(servers.Dev_Server)   
-    const JXND = client.guilds.cache.get(servers.JaxinaDomain)
+    const JXND = client.guilds.cache.get(servers.SSv2)
     const DevSVID = servers.Dev_Server
-    const JXNDID = servers.JaxinaDomain
+    const VVID = servers.SSv2
     const selectedValue = interaction.values[0];
 
     let success
@@ -218,7 +218,7 @@ async function loadMenu(interaction, client) {
 
     } else if (selectedValue === "supsv1") { // JAXINA DOMAIN 
 
-        const server = await schemaServer.findOne({ guildId: JXNDID })
+        const server = await schemaServer.findOne({ guildId: VVID })
 
         if (!server) {
 

@@ -149,7 +149,7 @@ module.exports = {
 
             // Select Server
             const DevSV = client.guilds.cache.get(servers.Dev_Server)   
-            const JXND = client.guilds.cache.get(servers.JaxinaDomain)
+            const VV = client.guilds.cache.get(servers.SSv2)
 
             const serverselection = new StringSelectMenuBuilder()
 			.setCustomId('servers')
@@ -161,7 +161,7 @@ module.exports = {
 					.setValue('devsv'),
 
                 new StringSelectMenuOptionBuilder()
-					.setLabel(`${JXND}`)
+					.setLabel(`${VV}`)
 					.setDescription('Supported server')
 					.setValue('supsv1')    
             )
@@ -175,7 +175,7 @@ module.exports = {
                 .setDescription(`Before creating a ticket, please select a desired server for contacting. You may find the information about the supported servers below:`)
                 .addFields(
                     {name: `\n`, value: `> 🔧 **[${DevSV}](https://discord.gg)** \n> ** **\n> **Server type:** \`Dev Server\` \n> **Member counts:** \`${DevSV.memberCount}\`\n> **Application status:** \`Online\``, inline: true},
-                    {name: `\n`, value: `> ✅ **[${JXND}](https://discord.gg/jjZMNjzzjQ)** \n> ** **\n> **Server type:** \`Supported server\` \n> **Member counts:** \`${JXND.memberCount}\`\n> **Application status:** \`Online\``, inline: true},
+                    {name: `\n`, value: `> ✅ **[${VV}](https://discord.gg/jjZMNjzzjQ)** \n> ** **\n> **Server type:** \`Supported server\` \n> **Member counts:** \`${VV.memberCount}\`\n> **Application status:** \`Online\``, inline: true},
                 )
                 .setFooter({
                     text: "📝 If the application is unavailable, please contact the developers for further assistance.",

@@ -1,10 +1,10 @@
 const { Client, GatewayIntentBits, Partials, Collection} = require("discord.js")
-const { Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent } = GatewayIntentBits
+const { Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent, GuildVoiceStates } = GatewayIntentBits
 const { User, Message, GuildMember, Channel } = Partials
 require("dotenv").config()
 
 const client = new Client({
-  intents: [Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent],
+  intents: [Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent, GuildVoiceStates],
   partials: [User, Message, GuildMember, Channel]
 })
 

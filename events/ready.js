@@ -8,9 +8,9 @@ module.exports = {
         
         client.user.setPresence({ 
             activities: [{ 
-                name: 'Kobaryo feat. Srezcat - kawAIi', 
+                name: 'Steve Angello, Modern Tales - Darkness In Me', 
                 type: ActivityType.Streaming, 
-                url: 'https://www.youtube.com/watch?v=tC6jLQ-MRFo' 
+                url: 'https://youtu.be/8SjZ8l-5S6M?si=TVNQMmbSeLZWYTWq' 
             }], 
             status: 'dnd' 
         });
