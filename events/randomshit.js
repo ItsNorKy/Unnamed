@@ -1,83 +1,85 @@
-const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, AttachmentBuilder } = require("discord.js")
+const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, AttachmentBuilder } = require("discord.js");
+
 module.exports = {
-    name: "messageCreate",
-    once: false,
+  name: "messageCreate",
+  once: false,
 
-    async execute(message, client) {
+  async execute(message, client) {
+    if (message.author.bot) return;
+    if (message.channel.isDMBased()) return;
 
-        if (message.author.bot) return;
+//cd
+    if (!client.cooldowns) client.cooldowns = new Map();
 
-        if (message.channel.isDMBased()) return;
+    const userId = message.author.id;
+    const now = Date.now();
+    const cooldownTime = 15 * 1000; // 10 seconds
 
-        const triggers = [
-        {
-            words: [
+    //check if cd
+    const lastTrigger = client.cooldowns.get(userId);
+    if (lastTrigger && now - lastTrigger < cooldownTime) return;
 
-                    'kms', 
-                    'kill myself',
-                    'hang myself', 
-                    'jump off', 
-                    'kill my self',
-                    'hang my self',
-                    'commit suicide',
-                    'kys',
-                    'kill yourself',
-                    'end yourself'
-
-                    ],
-            file: './Vids/dontkyslowres.mp4'
-        },
-
-        {
-            words: [
-
-                    'lonely', 
-                    'evernight'
-
-                ],
-            file: './Vids/lonelylowres.mp4'
-        },
-
-        {
-            words: [
-
-                    'agnes', 
-                    'tachyon'
-
-                ],
-            file: './Vids/agnes4lowres.mp4'
-        },
-
-        {
-            regexes: [
-
-                    /\bntr\b/i,
-                    /\bnarita top road\b/i,
-                    /\bnetori\b/i,
-                    /\bnetorare\b/i
-                ],
-            file: './Vids/NTRlowres.mp4'
-  }
+    const triggers = [
+      {
+        words: [
+          'kms', 
+          'kill myself',
+          'hang myself', 
+          'jump off', 
+          'kill my self',
+          'hang my self',
+          'commit suicide',
+          'kys',
+          'kill yourself',
+          'end yourself'
+        ],
+        file: './Vids/dontkyslowres.mp4'
+      },
+      {
+        words: [
+          'lonely', 
+          'evernight'
+        ],
+        file: './Vids/lonelylowres.mp4'
+      },
+      {
+        words: [
+          'agnes', 
+          'tachyon'
+        ],
+        file: './Vids/agnes4lowres.mp4'
+      },
+      {
+        regexes: [
+          /\bntr\b/i,
+          /\bnarita top road\b/i,
+          /\bnetori\b/i,
+          /\bnetorare\b/i
+        ],
+        file: './Vids/NTRlowres.mp4'
+      }
     ];
 
     const content = message.content.toLowerCase();
 
     for (const { words, regexes, file } of triggers) {
-  const matched =
-    (words && words.some(word => content.includes(word))) ||
-    (regexes && regexes.some(regex => regex.test(content)));
+      const matched =
+        (words && words.some(word => content.includes(word))) ||
+        (regexes && regexes.some(regex => regex.test(content)));
 
-  if (matched) {
-    try {
-      await message.reply({ files: [file] });
-    } catch (err) {
-      console.error(err);
-    }
-    break; // stop after the first match
-    }
+      if (matched) {
+        try {
+          await message.reply({ files: [file] });
+          client.cooldowns.set(userId, now); // set cooldown after triggering
+        } catch (err) {
+          console.error(err);
         }
+        break; // stop after first match
+      }
     }
-}
+  }
+};
+
 
 
  
