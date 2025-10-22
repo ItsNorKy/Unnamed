@@ -49,31 +49,33 @@ module.exports = {
         },
 
         {
-            words: [
-                
-                'ntr', 
-                'narita top road', 
-                'netori', 
-                'netorare'
+            regexes: [
 
-            ],
+                    /\bntr\b/i,
+                    /\bnarita top road\b/i,
+                    /\bnetori\b/i,
+                    /\bnetorare\b/i
+                ],
             file: './Vids/NTRlowres.mp4'
-        }
+  }
     ];
 
     const content = message.content.toLowerCase();
 
-    for (const { words, file } of triggers) {
-        if (words.some(word => content.includes(word))) {
-        try {
-            await message.reply({ files: [file] });
-        } catch (err) {
-        console.error(err);
+    for (const { words, regexes, file } of triggers) {
+  const matched =
+    (words && words.some(word => content.includes(word))) ||
+    (regexes && regexes.some(regex => regex.test(content)));
+
+  if (matched) {
+    try {
+      await message.reply({ files: [file] });
+    } catch (err) {
+      console.error(err);
+    }
+    break; // stop after the first match
+    }
         }
-            break; // stop after the first match
-            
-            }
-        }   
     }
 }
 
