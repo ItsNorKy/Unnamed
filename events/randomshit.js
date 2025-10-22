@@ -9,30 +9,71 @@ module.exports = {
 
         if (message.channel.isDMBased()) return;
 
-        const triggerWords = [
-            'kms', 
-            'kill myself', 
-            'hang myself', 
-            'jump off', 
-            'kill my self',
-            'hang my self',
-            'commit suicide',
-            'kys',
-            'kill yourself',
-            'end yourself'
-        ];
+        const triggers = [
+        {
+            words: [
 
-        const content = message.content.toLowerCase();
+                    'kms', 
+                    'kill myself',
+                    'hang myself', 
+                    'jump off', 
+                    'kill my self',
+                    'hang my self',
+                    'commit suicide',
+                    'kys',
+                    'kill yourself',
+                    'end yourself'
 
-        if (triggerWords.some(word => content.includes(word))) {
-            try {
-          message.reply({
-            files: ['./Vids/dontkyslowres.mp4']
-          });
+                    ],
+            file: './Vids/dontkyslowres.mp4'
+        },
+
+        {
+            words: [
+
+                    'lonely', 
+                    'evernight'
+
+                ],
+            file: './Vids/lonelylowres.mp4'
+        },
+
+        {
+            words: [
+
+                    'agnes', 
+                    'tachyon'
+
+                ],
+            file: './Vids/agnes4lowres.mp4'
+        },
+
+        {
+            words: [
+                
+                'ntr', 
+                'narita top road', 
+                'netori', 
+                'netorare'
+
+            ],
+            file: './Vids/NTRlowres.mp4'
+        }
+    ];
+
+    const content = message.content.toLowerCase();
+
+    for (const { words, file } of triggers) {
+        if (words.some(word => content.includes(word))) {
+        try {
+            await message.reply({ files: [file] });
         } catch (err) {
-            console.log(err)
+        console.error(err);
         }
-        }
+            break; // stop after the first match
+            
+            }
+        }   
     }
 }
 

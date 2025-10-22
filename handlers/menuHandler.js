@@ -216,7 +216,7 @@ async function loadMenu(interaction, client) {
         })
         }    
 
-    } else if (selectedValue === "supsv1") { // JAXINA DOMAIN 
+    } else if (selectedValue === "supsv1") { // VV
 
         const server = await schemaServer.findOne({ guildId: VVID })
 
