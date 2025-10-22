@@ -13,7 +13,7 @@ module.exports = {
 
     const userId = message.author.id;
     const now = Date.now();
-    const cooldownTime = 15 * 1000; // 10 seconds
+    const cooldownTime = 60 * 1000; // 10 seconds
 
     //check if cd
     const lastTrigger = client.cooldowns.get(userId);
