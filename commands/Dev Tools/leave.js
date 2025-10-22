@@ -14,6 +14,16 @@ module.exports = {
      * @param {ChatInputCommandInteraction} interaction
      */
     async execute (interaction, client) {
+        if (interaction.user.id == "590827375189557259" ) {
         interaction.guild.leave()
+        } else {
+        
+                    const invalid = new EmbedBuilder()
+                    .setColor("Red")
+                    .setDescription("Insufficient permissions to execute this command")
+                    interaction.reply(
+                        {embeds: [invalid], flags: 64}
+                    )
+                }
     }
 }
