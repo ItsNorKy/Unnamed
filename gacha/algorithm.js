@@ -35,7 +35,7 @@ function getFiveStarRate(pityCount) {
   }
 
   const progress = pityCount - softStart;
-  const exponent = 2.105; // controls curve steepness
+  const exponent = 2.12; // controls curve steepness
   const maxProgress = hardPity - softStart;
   const rate = base + Math.pow(progress / maxProgress, exponent) * (1 - base);
 
