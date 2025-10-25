@@ -129,7 +129,7 @@ await GachaPull.insertMany(
       .setColor(embedColor)
       .setImage("attachment://pull_result.jpeg")
       .setFooter({
-        text: `5★: ${userState.pity5}/80 - 4★: ${userState.pity4}/10`
+        text: `5✦: ${userState.pity5}/80 - 4✦: ${userState.pity4}/10`
       });
 
     await interaction.editReply({
