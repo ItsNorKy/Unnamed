@@ -3,6 +3,7 @@ const { SlashCommandBuilder, AttachmentBuilder, EmbedBuilder, Collection } = req
 const { pullOnce } = require("../../gacha/algorithm");
 const { loadUser, saveUser } = require("../../gacha/userData");
 const { renderGachaResult } = require("../../gacha/result_canvas");
+const GachaHistory = require("../../gacha/history_schema");
 const fs = require("fs");
 const path = require("path");
 const cooldowns = new Collection();
@@ -45,8 +46,11 @@ module.exports = {
     cooldowns.set(userId, now + cooldownAmount);
     setTimeout(() => cooldowns.delete(userId), cooldownAmount);
 
+
+    //defer reply
     await interaction.deferReply();
 
+    //get pull amounts
     const amount = interaction.options.getInteger("amount");
 
     //load user state
@@ -57,6 +61,27 @@ module.exports = {
     for (let i = 0; i < amount; i++) {
       results.push(pullOnce(userState));
     }
+
+  // Gacha history save
+  await GachaHistory.findOneAndUpdate(
+  { userId },
+  {
+    $push: {
+      pulls: {
+        $each: results.map(r => ({
+          name: r.name,
+          rarity: r.rarity,
+          timestamp: new Date()
+        })),
+        $position: 0, // newest first
+        $slice: 100 // limit stored pulls // optional idk
+      }
+    },
+    $inc: { totalPulls: results.length },
+    $set: { lastUpdated: new Date() }
+  },
+  { upsert: true, new: true }
+  );
 
     // Save user pity
     await saveUser(userState);
