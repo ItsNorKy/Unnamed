@@ -82,6 +82,9 @@ module.exports = {
   },
   { upsert: true, new: true }
   );
+//debug
+const updatedHistory = await GachaHistory.findOne({ userId });
+console.log("Sample pull entry for user:", JSON.stringify(updatedHistory.pulls[0], null, 2));
 
     // Save user pity
     await saveUser(userState);
