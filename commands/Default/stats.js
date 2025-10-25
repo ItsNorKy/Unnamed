@@ -13,25 +13,27 @@ module.exports = {
     ),
 
   async execute(interaction) {
+    await interaction.deferReply();
 
     const targetUser = interaction.options.getUser("user") || interaction.user;
     const userId = targetUser.id;
 
-    if (targetUser.bot) return; // check if bot 
+    if (targetUser.bot) return;
 
-    const history = await GachaHistory.findOne({ userId });
+    const history = await GachaHistory.findOne({ userId: userId.toString() });
+    console.log(`[STATS CMD] History for ${userId}:`, history);
+
     if (!history || !history.pulls.length) {
-      return interaction.reply({
+      return interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setColor("Red")
             .setDescription(`Unable to display user's convene stats. This user has not made any pulls yet.`)
-        ],
-        flags: 64
+        ]
       });
     }
 
-    const totalPulls = history.totalPulls;
+    const totalPulls = history.totalPulls || history.pulls.length;
     const rarityCounts = { 3: 0, 4: 0, 5: 0 };
     for (const pull of history.pulls) {
       rarityCounts[pull.rarity] = (rarityCounts[pull.rarity] || 0) + 1;
@@ -49,8 +51,9 @@ module.exports = {
           `**3★:** ${rarityCounts[3] || 0} (${percent(3)}%)`
         ].join("\n")
       )
-      .setFooter({ text: `Last updated: ${history.lastUpdated.toLocaleString()}` });
+      .setFooter({ text: `Last updated: ${history.lastUpdated?.toLocaleString() || "N/A"}` });
 
     await interaction.editReply({ embeds: [embed] });
   }
 };
+
