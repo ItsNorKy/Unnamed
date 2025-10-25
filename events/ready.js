@@ -12,9 +12,10 @@ module.exports = {
                 type: ActivityType.Streaming, 
                 url: 'https://youtu.be/8SjZ8l-5S6M?si=TVNQMmbSeLZWYTWq' 
             }], 
+
             status: 'dnd' 
         });
 
-        console.log("\nProject has been deployed, bot is online")
+        console.log("\nProject has been deployed, bot is online");
     }
 };
