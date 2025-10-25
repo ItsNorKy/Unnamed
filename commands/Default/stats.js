@@ -1,41 +1,40 @@
 // commands/gacha/stats.js
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const GachaHistory = require("../../gacha/history_schema");
+const GachaPull = require("../../gacha/pull_schema");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("stats")
     .setDescription("View convene statistics")
     .addUserOption(option =>
-      option
-        .setName("user")
-        .setDescription("Check another user's stats")
+      option.setName("user").setDescription("Check another user's stats")
     ),
 
   async execute(interaction) {
-    await interaction.deferReply();
-
     const targetUser = interaction.options.getUser("user") || interaction.user;
     const userId = targetUser.id;
 
-    if (targetUser.bot) return;
+    if (targetUser.bot)
+      return interaction.reply({
+        content: "Bots don’t have stats.",
+        flags: 64
+      });
 
-    const history = await GachaHistory.findOne({ userId: userId.toString() });
-    console.log(`[STATS CMD] History for ${userId}:`, history);
-
-    if (!history || !history.pulls.length) {
-      return interaction.editReply({
+    const pulls = await GachaPull.find({ userId });
+    if (!pulls.length) {
+      return interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setColor("Red")
-            .setDescription(`Unable to display user's convene stats. This user has not made any pulls yet.`)
-        ]
+            .setDescription("This user has not made any pulls yet.")
+        ],
+        flags: 64
       });
     }
 
-    const totalPulls = history.totalPulls || history.pulls.length;
+    const totalPulls = pulls.length;
     const rarityCounts = { 3: 0, 4: 0, 5: 0 };
-    for (const pull of history.pulls) {
+    for (const pull of pulls) {
       rarityCounts[pull.rarity] = (rarityCounts[pull.rarity] || 0) + 1;
     }
 
@@ -51,9 +50,11 @@ module.exports = {
           `**3★:** ${rarityCounts[3] || 0} (${percent(3)}%)`
         ].join("\n")
       )
-      .setFooter({ text: `Last updated: ${history.lastUpdated?.toLocaleString() || "N/A"}` });
+      .setFooter({
+        text: `Last pull: ${pulls[pulls.length - 1].timestamp.toLocaleString()}`
+      });
 
-    await interaction.editReply({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed] });
   }
 };
 
