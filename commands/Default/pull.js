@@ -105,12 +105,17 @@ module.exports = {
 
   // Build the embed
   const embed = new EmbedBuilder()
-      .setTitle(`${interaction.user.username}'s pull result`)
+      .setTitle(`**From Ashes**`)
+      .setAuthor({
+      name: interaction.user.username,
+      iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+      })
+      .setThumbnail("https://static.wikia.nocookie.net/wutheringwaves/images/c/cb/Icon_Convene.png/revision/latest?cb=20250923100828")
       .setDescription(description)
       .setColor(embedColor)
       .setImage("attachment://pull_result.jpeg")
       .setFooter({
-        text: `${userState.pity5}/80 (5★) | ${userState.pity4}/10 (4★)`
+        text: `5★: ${userState.pity5}/80 - 4★: ${userState.pity4}/10`
       });
 
     await interaction.editReply({
