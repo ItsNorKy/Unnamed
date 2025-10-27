@@ -12,6 +12,16 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("pull")
     .setDescription("Perform a gacha pull! (BETA FEATURE)")
+    .addStringOption(option =>
+      option
+        .setName("banner")
+        .setDescription("Select a limited banner")
+        .addChoices(
+          { name: "Featured Resonator", value: "ftres" },
+          { name: "Rerun Resonator", value: "rerunres" }
+        )
+        .setRequired(true)
+    )
     .addIntegerOption(option =>
       option
         .setName("amount")
@@ -50,27 +60,27 @@ module.exports = {
     //defer reply
     await interaction.deferReply();
 
-    //get pull amounts
-    const amount = interaction.options.getInteger("amount");
+  // get options
+  const bannerOption = interaction.options.getString("banner"); // "ftres" or "rerunres"
+  const amount = interaction.options.getInteger("amount");
 
-    //load user state
-    const userState = await loadUser(userId);
+  const userState = await loadUser(userId);
+  const results = [];
 
-    // perform pulls
-    const results = [];
-    for (let i = 0; i < amount; i++) {
-      results.push(pullOnce(userState));
-    }
+  for (let i = 0; i < amount; i++) {
+  results.push(pullOnce(userState, bannerOption));
+  }
 
-  // Gacha history save
-await GachaPull.insertMany(
-  results.map(r => ({
+    // Gacha history save
+    await GachaPull.insertMany(
+    results.map(r => ({
     userId,
     name: r.name,
     rarity: r.rarity,
+    banner: bannerName, 
     timestamp: new Date()
-  }))
-);
+    }))
+  );
 
     // Save user pity
     await saveUser(userState);
@@ -119,7 +129,7 @@ await GachaPull.insertMany(
 
   // Build the embed
   const embed = new EmbedBuilder()
-      .setTitle(`**From Ashes**`)
+      .setTitle(`**Convene Result**`)
       .setAuthor({
       name: interaction.user.username,
       iconURL: interaction.user.displayAvatarURL({ dynamic: true })

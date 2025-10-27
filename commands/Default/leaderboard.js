@@ -208,7 +208,10 @@ module.exports = {
 
       collector.on("collect", async (btnInt) => {
         if (btnInt.user.id !== interaction.user.id) {
-          return btnInt.reply({ content: "You can't use these buttons.", ephemeral: true });
+          const er = EmbedBuilder()
+          .setColor("Red")
+          .setDescription("Unable to interact with this button. This embed is being used by someone else.")
+          return btnInt.reply({ embeds: [er], flags: 64 });
         }
 
         if (btnInt.customId === "prev" && currentPage > 0) currentPage--;

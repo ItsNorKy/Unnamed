@@ -1,10 +1,4 @@
-const {
-  featured5Star,
-  standard5Stars,
-  featured4Stars,
-  standard4Stars,
-  standard3Stars
-} = require("./data");
+const { banners, activeBanners } = require("./data");
 
 // Utility
 function getRandomElement(arr) {
@@ -50,8 +44,13 @@ function getFourStarRate(pityCount) {
 }
 
 //Pull Logic
-function pullOnce(userState) {
-  let { pity5, pity4, guaranteed5Star, guaranteed4Star } = userState;
+function pullOnce(userState, bannerName) {
+  const bannerName = activeBanners[bannerOption];
+  const banner = banners[bannerName];
+
+  if (!banner) throw new Error(`Unknown banner: ${bannerOption}`);
+
+  const { featured5Star, featured4Stars, standard5Stars, standard4Stars, standard3Stars } = banner;
 
   const rate5 = getFiveStarRate(pity5);
   const rate4 = getFourStarRate(pity4);
