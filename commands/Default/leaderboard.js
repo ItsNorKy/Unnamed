@@ -60,40 +60,46 @@ module.exports = {
         ]);
       }
 
-      //  5/50
-      else if (category === "streaks") {
-        embedTitle = "50/50 Win Streak Leaderboard";
-        const allUsers = await GachaPull.distinct("userId");
-        const streakData = [];
+      //  50/50
+     else if (category === "streaks") {
+  embedTitle = "50/50 Win Streak Leaderboard";
+  const allUsers = await GachaPull.distinct("userId");
+  const streakData = [];
 
-        for (const userId of allUsers) {
-          const pulls = await GachaPull.find({ userId }).sort({ timestamp: 1 }).lean();
-          let currentStreak = 0;
-          let longestStreak = 0;
+  for (const userId of allUsers) {
+    const pulls = await GachaPull.find({ userId }).sort({ timestamp: 1 }).lean();
+    let currentStreak = 0;
+    let longestStreak = 0;
 
-          for (const p of pulls) {
-            if (p.rarity === 5) {
-              const isFeatured = p.name === featured5Star;
-              if (isFeatured) {
-                currentStreak++;
-                if (currentStreak > longestStreak) longestStreak = currentStreak;
-              } else {
-                currentStreak = 0;
-              }
-            }
-          }
+    for (const p of pulls) {
+      if (p.rarity === 5) {
+        // get featured name
+        const bannerKey = p.banner; 
+        const bannerName = activeBanners[bannerKey];
+        const featured5Star = banners[bannerName]?.featured5Star;
 
-          if (longestStreak > 0) {
-            streakData.push({
-              _id: userId,
-              username: pulls[0]?.username || "Unknown",
-              count: longestStreak,
-            });
-          }
+        const isFeatured = p.name === featured5Star;
+
+        if (isFeatured) {
+          currentStreak++;
+          longestStreak = Math.max(longestStreak, currentStreak);
+        } else {
+          currentStreak = 0;
         }
-
-        leaderboardData = streakData.sort((a, b) => b.count - a.count).slice(0, 50);
       }
+    }
+
+    if (longestStreak > 0) {
+      streakData.push({
+        _id: userId,
+        username: pulls[0]?.username || "Unknown",
+        count: longestStreak,
+      });
+    }
+  }
+
+  leaderboardData = streakData.sort((a, b) => b.count - a.count).slice(0, 50);
+}
 
       // lingyang lb
       else if (category === "lingyang") {
