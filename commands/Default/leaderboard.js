@@ -6,7 +6,7 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const GachaPull = require("../../gacha/pull_schema");
-const { featured5Star } = require("../../gacha/data");
+const { banners, activeBanners } = require("../../gacha/data");
 const config = require("../../config.json");
 
 module.exports = {
@@ -74,7 +74,7 @@ module.exports = {
     for (const p of pulls) {
       if (p.rarity === 5) {
         // get featured name
-        const bannerKey = p.banner; 
+        const bannerKey = p.banner || "ftres";
         const bannerName = activeBanners[bannerKey];
         const featured5Star = banners[bannerName]?.featured5Star;
 
