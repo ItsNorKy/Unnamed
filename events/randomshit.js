@@ -43,9 +43,10 @@ module.exports = {
         file: './Vids/lonelylowres.mp4'
       },
       {
-        words: [
-          'agnes', 
-          'tachyon'
+         regexes: [
+          /\bagnes\b/i,
+          /\bagnes tachyon\b/i,
+          /\btachyon\b/i
         ],
         file: './Vids/agnes4lowres.mp4'
       },
