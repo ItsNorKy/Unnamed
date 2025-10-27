@@ -77,7 +77,7 @@ module.exports = {
     userId,
     name: r.name,
     rarity: r.rarity,
-    banner: bannerName, 
+    banner: bannerOption, 
     timestamp: new Date()
     }))
   );
