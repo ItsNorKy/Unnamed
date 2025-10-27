@@ -29,8 +29,8 @@ module.exports = {
 
   // Modify accordingly to match active banners
   activeBanners: {
-    ftres: "Galbrena",  // Featured Resonator banner
-    rerunres: "Lupa"    // Rerun banner
+    ftres: "galbrena",  // Featured Resonator banner
+    rerunres: "lupa"    // Rerun banner
   },
 
   banners: {
@@ -75,7 +75,7 @@ module.exports = {
     },
 
     // --------------------------------------- LUPA BANNER ----------------------------------------------
-    
+
     lupa: { 
       featured5Star: "Lupa",
       standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
