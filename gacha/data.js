@@ -29,8 +29,8 @@ module.exports = {
 
   // Modify accordingly to match active banners
   activeBanners: {
-    ftres: "galbrena",  // Featured Resonator banner
-    rerunres: "lupa"    // Rerun banner
+    ftres: "qiuyuan",  // Featured Resonator banner
+    rerunres: "zani"    // Rerun banner
   },
 
   banners: {
@@ -111,7 +111,87 @@ module.exports = {
       "Weapon - Fusion Accretion",
     ],
       standard3Stars: standard3pool
-    }
+    },
+
+
+// --------------------------------------- QIUYUAN BANNER ----------------------------------------------
+
+    qiuyuan: { // Qiuyuan Banner
+      featured5Star: "Qiuyuan",
+      standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
+      featured4Stars: ["Yangyang", "Danjin", "Taoqi"],
+      standard4Stars: [
+      "Lumi",
+      "Mortefi",
+      "Sanhua",
+      "Aalto", // Aalto
+      "Chixia", // Chixia
+      "Baizhi", // Baizhi
+      "Youhu", // Youhu
+      "Yuanwu", // Yuanwu
+      "Weapon - Overture",
+      "Weapon - Lunar Cutter",
+      "Weapon - Commando of Conviction",
+      "Weapon - Variation",
+      "Weapon - Jinzhou Keeper",
+      "Weapon - Comet Flare",
+      "Weapon - Undying Flame",
+      "Weapon - Novaburst",
+      "Weapon - Cadenza",
+      "Weapon - Marcato",
+      "Weapon - Hollow Mirage",
+      "Weapon - Amity Accord",
+      "Weapon - Helios Cleaver",
+      "Weapon - Discord",
+      "Weapon - Dauntless Evernight",
+      "Weapon - Endless Collapse",
+      "Weapon - Waning Redshift",
+      "Weapon - Relativistic Jet",
+      "Weapon - Celestial Spiral",
+      "Weapon - Fusion Accretion",
+    ],
+      standard3Stars: standard3pool
+    },
+
+
+    // --------------------------------------- ZANI BANNER ----------------------------------------------
+
+    zani: { // Zani Banner
+      featured5Star: "Zani",
+      standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
+      featured4Stars: ["Yangyang", "Danjin", "Taoqi"],
+      standard4Stars: [
+      "Lumi",
+      "Mortefi",
+      "Sanhua",
+      "Aalto", // Aalto
+      "Chixia", // Chixia
+      "Baizhi", // Baizhi
+      "Youhu", // Youhu
+      "Yuanwu", // Yuanwu
+      "Weapon - Overture",
+      "Weapon - Lunar Cutter",
+      "Weapon - Commando of Conviction",
+      "Weapon - Variation",
+      "Weapon - Jinzhou Keeper",
+      "Weapon - Comet Flare",
+      "Weapon - Undying Flame",
+      "Weapon - Novaburst",
+      "Weapon - Cadenza",
+      "Weapon - Marcato",
+      "Weapon - Hollow Mirage",
+      "Weapon - Amity Accord",
+      "Weapon - Helios Cleaver",
+      "Weapon - Discord",
+      "Weapon - Dauntless Evernight",
+      "Weapon - Endless Collapse",
+      "Weapon - Waning Redshift",
+      "Weapon - Relativistic Jet",
+      "Weapon - Celestial Spiral",
+      "Weapon - Fusion Accretion",
+    ],
+      standard3Stars: standard3pool
+    },
   }
 }; 
 
