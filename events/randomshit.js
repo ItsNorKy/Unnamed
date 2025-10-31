@@ -55,7 +55,8 @@ module.exports = {
           /\bntr\b/i,
           /\bnarita top road\b/i,
           /\bnetori\b/i,
-          /\bnetorare\b/i
+          /\bnetorare\b/i,
+          /\bnarita\b/i
         ],
         file: './Vids/NTRlowres.mp4'
       }
