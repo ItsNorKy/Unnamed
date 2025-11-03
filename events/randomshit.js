@@ -21,17 +21,16 @@ module.exports = {
 
     const triggers = [
       {
-        words: [
-          'kms', 
-          'kill myself',
-          'hang myself', 
-          'jump off', 
-          'kill my self',
-          'hang my self',
-          'commit suicide',
-          'kys',
-          'kill yourself',
-          'end yourself'
+        regexes: [
+          /\bkms\b/i,
+          /\bkill myself\b/i,
+          /\bhang myself\b/i,
+          /\bkill my self\b/i,
+          /\bhang my self\b/i,
+          /\bcommit suicide\b/i,
+          /\bkys\b/i,
+          /\bkill yourself\b/i,
+          /\bend yourself\b/i,
         ],
         file: './Vids/dontkyslowres.mp4'
       },
