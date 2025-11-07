@@ -1,6 +1,10 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require("discord.js");
 const GachaPull = require("../../gacha/pull_schema");
-const { featured5Star, standard5Stars } = require("../../gacha/data");
+const data = require("../../gacha/data");
+const activeBannerKey = data.activeBanners.ftres; 
+const banner = data.banners[activeBannerKey];
+const featured5Star = banner.featured5Star;
+const standard5Stars = banner.standard5Stars;
 const config = require("../../config.json");
 const { createCanvas, registerFont } = require("canvas");
 const path = require("path");
