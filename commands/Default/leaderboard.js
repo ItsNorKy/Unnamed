@@ -27,14 +27,11 @@ module.exports = {
 
   async execute(interaction, client) {
     await interaction.deferReply();
-
     const category = interaction.options.getString("category");
 
     const usernameCache = new Map();
-
     async function getUsername(userId) {
       if (usernameCache.has(userId)) return usernameCache.get(userId);
-
       try {
         const user = await interaction.client.users.fetch(userId);
         const username = user.username || "Unknown";
@@ -50,7 +47,7 @@ module.exports = {
       let leaderboardData = [];
       let embedTitle = "";
 
-      // total pulls
+      // 🧮 Total Pulls
       if (category === "total") {
         embedTitle = "Total Pulls Leaderboard";
         leaderboardData = await GachaPull.aggregate([
@@ -60,48 +57,46 @@ module.exports = {
         ]);
       }
 
-      //  50/50
-     else if (category === "streaks") {
-  embedTitle = "50/50 Win Streak Leaderboard";
-  const allUsers = await GachaPull.distinct("userId");
-  const streakData = [];
+      // 🧩 50/50 Win Streaks
+      else if (category === "streaks") {
+        embedTitle = "50/50 Win Streak Leaderboard";
+        const allUsers = await GachaPull.distinct("userId");
+        const streakData = [];
 
-  for (const userId of allUsers) {
-    const pulls = await GachaPull.find({ userId }).sort({ timestamp: 1 }).lean();
-    let currentStreak = 0;
-    let longestStreak = 0;
+        for (const userId of allUsers) {
+          const pulls = await GachaPull.find({ userId }).sort({ timestamp: 1 }).lean();
+          let currentStreak = 0;
+          let longestStreak = 0;
 
-    for (const p of pulls) {
-      if (p.rarity === 5) {
-        // get featured name
-        const bannerKey = p.banner || "ftres";
-        const bannerName = activeBanners[bannerKey];
-        const featured5Star = banners[bannerName]?.featured5Star;
+          for (const p of pulls) {
+            if (p.rarity === 5) {
+              // Use stored banner + featured data if available
+              const bannerName = p.banner || activeBanners[p.bannerKey] || "unknown";
+              const featured5Star = p.featured5Star || banners[bannerName]?.featured5Star;
 
-        const isFeatured = p.name === featured5Star;
+              const isFeatured = p.name === featured5Star;
+              if (isFeatured) {
+                currentStreak++;
+                longestStreak = Math.max(longestStreak, currentStreak);
+              } else {
+                currentStreak = 0;
+              }
+            }
+          }
 
-        if (isFeatured) {
-          currentStreak++;
-          longestStreak = Math.max(longestStreak, currentStreak);
-        } else {
-          currentStreak = 0;
+          if (longestStreak > 0) {
+            streakData.push({
+              _id: userId,
+              username: pulls[0]?.username || "Unknown",
+              count: longestStreak,
+            });
+          }
         }
+
+        leaderboardData = streakData.sort((a, b) => b.count - a.count).slice(0, 50);
       }
-    }
 
-    if (longestStreak > 0) {
-      streakData.push({
-        _id: userId,
-        username: pulls[0]?.username || "Unknown",
-        count: longestStreak,
-      });
-    }
-  }
-
-  leaderboardData = streakData.sort((a, b) => b.count - a.count).slice(0, 50);
-}
-
-      // lingyang lb
+      // 🦌 Lingyang Pulls
       else if (category === "lingyang") {
         embedTitle = "Lingyang Pulls Leaderboard";
         leaderboardData = await GachaPull.aggregate([
@@ -114,53 +109,32 @@ module.exports = {
 
       if (!leaderboardData.length) {
         return interaction.editReply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor("Red")
-              .setDescription("No leaderboard data available."),
-          ],
+          embeds: [new EmbedBuilder().setColor("Red").setDescription("No leaderboard data available.")],
         });
       }
 
-      //fetch username
-       for (const entry of leaderboardData) {
+      for (const entry of leaderboardData) {
         entry.username = await getUsername(entry._id);
       }
 
-      // pagination setup
       const pageSize = 10;
       const pages = [];
-      for (let i = 0; i < leaderboardData.length; i += pageSize) {
+      for (let i = 0; i < leaderboardData.length; i += pageSize)
         pages.push(leaderboardData.slice(i, i + pageSize));
-      }
       let currentPage = 0;
 
-      // desc builder
       const generateDescription = (pageData, startIndex) => {
         return pageData
           .map((entry, i) => {
             const rank = startIndex + i + 1;
             const userId = entry._id || "Unknown";
             const value = entry.count;
-            let prefix = `Top ${rank}.`;
-            if (rank === 1) prefix = "Top 1.";
-            else if (rank === 2) prefix = "Top 2.";
-            else if (rank === 3) prefix = "Top 3.";
-
+            const prefix = `Top ${rank}.`;
             const label =
-            category === "streaks" ? "win streaks" :
-            category === "lingyang" ? "femboys" :
-            "pulls";
-
+              category === "streaks" ? "win streaks" :
+              category === "lingyang" ? "femboys" :
+              "pulls";
             return `**${prefix}** <@${userId}> — \`${value} ${label}\``;
-          })
-          .map((line, i) => {
-            const absoluteRank = startIndex + i;
-            if (absoluteRank === 2) return `${line}\n** **\n━━━━━━━━ \`Top 3\` ━━━━━━━━━\n`;
-            if (absoluteRank === 9) return `${line}\n** **\n━━━━━━━━━ \`Top 10\` ━━━━━━━━━\n`;
-            if (absoluteRank === 24) return `${line}\n** **\n━━━━━━━━━ \`Top 25\` ━━━━━━━━━\n`;
-            if (absoluteRank === 49) return `${line}\n** **\n━━━━━━━━━ \`Top 50\` ━━━━━━━━━\n`;
-            return line;
           })
           .join("\n");
       };
@@ -168,39 +142,25 @@ module.exports = {
       const generateEmbed = (pageIndex) => {
         const pageData = pages[pageIndex];
         const startIndex = pageIndex * pageSize;
-
         return new EmbedBuilder()
           .setTitle(`**${embedTitle}**`)
           .setThumbnail("https://static.wikia.nocookie.net/wutheringwaves/images/d/d9/The_Black_Shores_Emblem.png/revision/latest?cb=20240529084501")
           .setColor(config.defaultclr || 0x00aeff)
           .setDescription(generateDescription(pageData, startIndex))
-          .setFooter({
-            text: `Page ${pageIndex + 1}/${pages.length}`,
-          })
+          .setFooter({ text: `Page ${pageIndex + 1}/${pages.length}` })
           .setTimestamp();
       };
 
-      //first page
-      if (pages.length === 1) {
-        // Only one page — no buttons
-        return interaction.editReply({
-          embeds: [generateEmbed(0)],
-        });
-      }
-
-      // add nav buttons (if more than one page)
       const prevBtn = new ButtonBuilder()
         .setCustomId("prev")
         .setEmoji("⏮️")
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(true);
-
       const nextBtn = new ButtonBuilder()
         .setCustomId("next")
         .setEmoji("⏭️")
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(pages.length <= 1);
-
       const row = new ActionRowBuilder().addComponents(prevBtn, nextBtn);
 
       const msg = await interaction.editReply({
@@ -208,24 +168,19 @@ module.exports = {
         components: [row],
       });
 
-      const collector = msg.createMessageComponentCollector({
-        time: 120000, // 2 minutes
-      });
-
+      const collector = msg.createMessageComponentCollector({ time: 120000 });
       collector.on("collect", async (btnInt) => {
-        if (btnInt.user.id !== interaction.user.id) {
-          const er = EmbedBuilder()
-          .setColor("Red")
-          .setDescription("Unable to interact with this button. This embed is being used by someone else.")
-          return btnInt.reply({ embeds: [er], flags: 64 });
-        }
+        if (btnInt.user.id !== interaction.user.id)
+          return btnInt.reply({
+            embeds: [new EmbedBuilder().setColor("Red").setDescription("This leaderboard is for someone else.")],
+            flags: 64
+          });
 
         if (btnInt.customId === "prev" && currentPage > 0) currentPage--;
         else if (btnInt.customId === "next" && currentPage < pages.length - 1) currentPage++;
 
         prevBtn.setDisabled(currentPage === 0);
         nextBtn.setDisabled(currentPage === pages.length - 1);
-
         await btnInt.update({
           embeds: [generateEmbed(currentPage)],
           components: [new ActionRowBuilder().addComponents(prevBtn, nextBtn)],
@@ -242,12 +197,9 @@ module.exports = {
     } catch (err) {
       console.error("Leaderboard error:", err);
       await interaction.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor("Red")
-            .setDescription("An error occurred while generating the leaderboard."),
-        ],
+        embeds: [new EmbedBuilder().setColor("Red").setDescription("An error occurred while generating the leaderboard.")],
       });
     }
   },
 };
+
