@@ -47,7 +47,7 @@ module.exports = {
       let leaderboardData = [];
       let embedTitle = "";
 
-      // 🧮 Total Pulls
+    // total pulls
       if (category === "total") {
         embedTitle = "Total Pulls Leaderboard";
         leaderboardData = await GachaPull.aggregate([
@@ -57,46 +57,63 @@ module.exports = {
         ]);
       }
 
-      // 🧩 50/50 Win Streaks
-      else if (category === "streaks") {
-        embedTitle = "50/50 Win Streak Leaderboard";
-        const allUsers = await GachaPull.distinct("userId");
-        const streakData = [];
+  //0/50 Win Streaks
+  else if (category === "streaks") {
+  embedTitle = "50/50 Win Streak Leaderboard";
+  const allUsers = await GachaPull.distinct("userId");
+  const streakData = [];
 
-        for (const userId of allUsers) {
-          const pulls = await GachaPull.find({ userId }).sort({ timestamp: 1 }).lean();
-          let currentStreak = 0;
-          let longestStreak = 0;
+  for (const userId of allUsers) {
+    const pulls = await GachaPull.find({ userId }).sort({ timestamp: 1 }).lean();
+    let currentStreak = 0;
+    let longestStreak = 0;
 
-          for (const p of pulls) {
-            if (p.rarity === 5) {
-              // Use stored banner + featured data if available
-              const bannerName = p.banner || activeBanners[p.bannerKey] || "unknown";
-              const featured5Star = p.featured5Star || banners[bannerName]?.featured5Star;
+    for (const p of pulls) {
+      if (p.rarity === 5) {
+        let featured5Star;
 
-              const isFeatured = p.name === featured5Star;
-              if (isFeatured) {
-                currentStreak++;
-                longestStreak = Math.max(longestStreak, currentStreak);
-              } else {
-                currentStreak = 0;
-              }
-            }
-          }
-
-          if (longestStreak > 0) {
-            streakData.push({
-              _id: userId,
-              username: pulls[0]?.username || "Unknown",
-              count: longestStreak,
-            });
-          }
+        if (p.featured5Star) {
+          featured5Star = p.featured5Star;
         }
 
-        leaderboardData = streakData.sort((a, b) => b.count - a.count).slice(0, 50);
-      }
+        else if (p.banner) {
+          featured5Star = banners[p.banner]?.featured5Star;
+        } else if (p.bannerKey) {
+          const bannerName = activeBanners[p.bannerKey];
+          featured5Star = banners[bannerName]?.featured5Star;
+        }
 
-      // 🦌 Lingyang Pulls
+        else {
+
+          const allFeatured = Object.values(activeBanners)
+            .map(b => banners[b]?.featured5Star)
+            .filter(Boolean);
+          featured5Star = allFeatured.includes(p.name) ? p.name : null;
+        }
+
+        const isFeatured = p.name === featured5Star;
+
+        if (isFeatured) {
+          currentStreak++;
+          longestStreak = Math.max(longestStreak, currentStreak);
+        } else {
+          currentStreak = 0;
+        }
+      }
+    }
+
+    if (longestStreak > 0) {
+      streakData.push({
+        _id: userId,
+        username: pulls[0]?.username || "Unknown",
+        count: longestStreak,
+      });
+    }
+  }
+
+  leaderboardData = streakData.sort((a, b) => b.count - a.count).slice(0, 50);
+}
+  // Lingyang
       else if (category === "lingyang") {
         embedTitle = "Lingyang Pulls Leaderboard";
         leaderboardData = await GachaPull.aggregate([
