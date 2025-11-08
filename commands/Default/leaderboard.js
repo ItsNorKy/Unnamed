@@ -57,7 +57,7 @@ module.exports = {
         ]);
       }
 
-  //0/50 Win Streaks
+  // 50/50 Win Streaks
   else if (category === "streaks") {
   embedTitle = "50/50 Win Streak Leaderboard";
   const allUsers = await GachaPull.distinct("userId");
@@ -124,37 +124,67 @@ module.exports = {
         ]);
       }
 
-      if (!leaderboardData.length) {
-        return interaction.editReply({
-          embeds: [new EmbedBuilder().setColor("Red").setDescription("No leaderboard data available.")],
-        });
-      }
+if (!leaderboardData.length) {
+  return interaction.editReply({
+    embeds: [
+      new EmbedBuilder()
+        .setColor("Red")
+        .setDescription("No leaderboard data available."),
+    ],
+  });
+}
 
-      for (const entry of leaderboardData) {
-        entry.username = await getUsername(entry._id);
-      }
+// Fetch usernames
+for (const entry of leaderboardData) {
+  entry.username = await getUsername(entry._id);
+}
 
-      const pageSize = 10;
-      const pages = [];
-      for (let i = 0; i < leaderboardData.length; i += pageSize)
-        pages.push(leaderboardData.slice(i, i + pageSize));
-      let currentPage = 0;
+// Pagination setup
+const pageSize = 10;
+const pages = [];
 
-      const generateDescription = (pageData, startIndex) => {
-        return pageData
-          .map((entry, i) => {
-            const rank = startIndex + i + 1;
-            const userId = entry._id || "Unknown";
-            const value = entry.count;
-            const prefix = `Top ${rank}.`;
-            const label =
-              category === "streaks" ? "win streaks" :
-              category === "lingyang" ? "femboys" :
-              "pulls";
-            return `**${prefix}** <@${userId}> — \`${value} ${label}\``;
-          })
-          .join("\n");
-      };
+for (let i = 0; i < leaderboardData.length; i += pageSize) {
+  pages.push(leaderboardData.slice(i, i + pageSize));
+}
+
+let currentPage = 0;
+
+// Description builder
+const generateDescription = (pageData, startIndex) => {
+  return pageData
+    .map((entry, i) => {
+      const rank = startIndex + i + 1;
+      const userId = entry._id || "Unknown";
+      const value = entry.count;
+
+      let prefix = `Top ${rank}.`;
+      if (rank === 1) prefix = "Top 1.";
+      else if (rank === 2) prefix = "Top 2.";
+      else if (rank === 3) prefix = "Top 3.";
+
+      const label =
+        category === "streaks"
+          ? "win streaks"
+          : category === "lingyang"
+          ? "femboys"
+          : "pulls";
+
+      return `**${prefix}** <@${userId}> — ${value} ${label}`;
+    })
+    .map((line, i) => {
+      const absoluteRank = startIndex + i;
+      if (absoluteRank === 2)
+        return `${line}\n** **\n━━━━━━━━ \`Top 3\` ━━━━━━━━━\n`;
+      if (absoluteRank === 9)
+        return `${line}\n** **\n━━━━━━━━━ \`Top 10\` ━━━━━━━━━\n`;
+      if (absoluteRank === 24)
+        return `${line}\n** **\n━━━━━━━━━ \`Top 25\` ━━━━━━━━━\n`;
+      if (absoluteRank === 49)
+        return `${line}\n** **\n━━━━━━━━━ \`Top 50\` ━━━━━━━━━\n`;
+      return line;
+    })
+    .join("\n");
+};
 
       const generateEmbed = (pageIndex) => {
         const pageData = pages[pageIndex];
