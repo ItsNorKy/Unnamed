@@ -1,5 +1,5 @@
 // api/server.js
-require("dotenv").config({ path: "../../.env" });
+require("dotenv").config() //{ path: "../../.env" });
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
