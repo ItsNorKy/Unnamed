@@ -28,6 +28,11 @@ connectDB()
 
 module.exports = { client }
 
-client.login(process.env.TOKEN).then(() => console.log("Bot is online!"))
-.catch(err => console.error("Login Error:", err));
+client.login(process.env.TOKEN).then(() => {
+
+  require("./chatbot/api/server"); // initialize serverjs for chatbot
+
+  console.log("Bot is online!")
+
+}).catch(err => console.error("Login Error:", err));
 
