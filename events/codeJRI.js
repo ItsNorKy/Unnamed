@@ -9,7 +9,7 @@ const queue = require("../chatbot/lib/queue");
 
 const axios = require("axios");
 
-const RESPONSE_CHANNEL = "1438023687256150248";
+const RESPONSE_CHANNEL = "1439618174717792400";
 
 // Rate limit map: per user 1.2 sec min gap
 const cooldowns = new Map();
