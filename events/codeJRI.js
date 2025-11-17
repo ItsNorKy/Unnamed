@@ -206,8 +206,8 @@ module.exports = {
   });
 
       // === MEMORY UPDATE ===
-      pushMemory(message.author.id, `User: ${userMessage}`);
-      pushMemory(message.author.id, `Jiari: ${reply}`);
+      pushMemory(message.author.id, `${userMessage}`);
+      pushMemory(message.author.id, `${reply}`);
       const { maybeSummarize } = require("../chatbot/lib/summarizer");
 
       await maybeSummarize(message.author.id);
