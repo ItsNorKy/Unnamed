@@ -1,6 +1,6 @@
 // starttimeout.js
 const { SlashCommandBuilder } = require("discord.js");
-const loops = require("../timeoutLoopManager");
+const loops = require("../../handlers/temp - 3ds");
 
 module.exports = {
     data: new SlashCommandBuilder()
