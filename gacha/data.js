@@ -29,11 +29,91 @@ module.exports = {
 
   // Modify accordingly to match active banners
   activeBanners: {
-    ftres: "chisa",  // Featured Resonator banner
-    rerunres: "phoebe"    // Rerun banner
+    ftres: "phrolova",  // Featured Resonator banner
+    rerunres: "cantarella"    // Rerun banner
   },
 
   banners: {
+
+    // --------------------------------------- CANTARELLA BANNER -------------------------------------------------
+
+     cantarella: { 
+      featured5Star: "Cantarella",
+      standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
+      featured4Stars: ["Buling", "Danjin", "Chixia"],
+      standard4Stars: [
+      "Aalto",
+      "Yuanwu",
+      "Taoqi",
+      "Lumi",
+      "Mortefi",
+      "Sanhua",
+      "Baizhi", // Baizhi
+      "Youhu", // Youhu
+      "Yangyang", // Yangyang
+      "Weapon - Overture",
+      "Weapon - Lunar Cutter",
+      "Weapon - Commando of Conviction",
+      "Weapon - Variation",
+      "Weapon - Jinzhou Keeper",
+      "Weapon - Comet Flare",
+      "Weapon - Undying Flame",
+      "Weapon - Novaburst",
+      "Weapon - Cadenza",
+      "Weapon - Marcato",
+      "Weapon - Hollow Mirage",
+      "Weapon - Amity Accord",
+      "Weapon - Helios Cleaver",
+      "Weapon - Discord",
+      "Weapon - Dauntless Evernight",
+      "Weapon - Endless Collapse",
+      "Weapon - Waning Redshift",
+      "Weapon - Relativistic Jet",
+      "Weapon - Celestial Spiral",
+      "Weapon - Fusion Accretion",
+    ],
+      standard3Stars: standard3pool
+    },
+
+    // --------------------------------------- PHROLOVA BANNER -------------------------------------------------
+
+     phrolova: { // Phrolova Banner
+      featured5Star: "Phrolova",
+      standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
+      featured4Stars: ["Buling", "Danjin", "Chixia"],
+      standard4Stars: [
+      "Aalto",
+      "Yuanwu",
+      "Taoqi",
+      "Lumi",
+      "Mortefi",
+      "Sanhua",
+      "Baizhi", // Baizhi
+      "Youhu", // Youhu
+      "Yangyang", // Yangyang
+      "Weapon - Overture",
+      "Weapon - Lunar Cutter",
+      "Weapon - Commando of Conviction",
+      "Weapon - Variation",
+      "Weapon - Jinzhou Keeper",
+      "Weapon - Comet Flare",
+      "Weapon - Undying Flame",
+      "Weapon - Novaburst",
+      "Weapon - Cadenza",
+      "Weapon - Marcato",
+      "Weapon - Hollow Mirage",
+      "Weapon - Amity Accord",
+      "Weapon - Helios Cleaver",
+      "Weapon - Discord",
+      "Weapon - Dauntless Evernight",
+      "Weapon - Endless Collapse",
+      "Weapon - Waning Redshift",
+      "Weapon - Relativistic Jet",
+      "Weapon - Celestial Spiral",
+      "Weapon - Fusion Accretion",
+    ],
+      standard3Stars: standard3pool
+    },
 
      // --------------------------------------- CHISA BANNER -------------------------------------------------
 
