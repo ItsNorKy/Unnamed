@@ -18,7 +18,8 @@ module.exports = {
         .setDescription("Select a limited banner")
         .addChoices(
           { name: "Featured Resonator", value: "ftres" },
-          { name: "Rerun Resonator", value: "rerunres" }
+          { name: "Rerun Resonator", value: "rerunres" },
+          { name: "Second Rerun Resonator ", value: "rerunres2" }
         )
         .setRequired(true)
     )

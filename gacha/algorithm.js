@@ -78,7 +78,7 @@ if (roll < rate5 || pity5 >= pityLimits.fiveStar - 1) {
 
     /// increased standard 5*
     const boostedStandard5Star = "Lingyang"; 
-    const boostedRateMultiplier = 2.5; // x2.5 more likely than others
+    const boostedRateMultiplier = 1; // x1 more likely than others
 
     // Weighted selection
     const pool = standard5Stars.map(name => ({

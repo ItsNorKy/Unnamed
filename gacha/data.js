@@ -29,11 +29,129 @@ module.exports = {
 
   // Modify accordingly to match active banners
   activeBanners: {
-    ftres: "phrolova",  // Featured Resonator banner
-    rerunres: "cantarella"    // Rerun banner
+    ftres: "lynae",  // Featured Resonator banner
+    rerunres: "cartethyia",
+    rerunres2: "ciaccona",    // Rerun banner 2
   },
 
   banners: {
+
+    // --------------------------------------- CIACCONA BANNER -------------------------------------------------
+
+     ciaccona: { 
+      featured5Star: "Ciaccona",
+      standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
+      featured4Stars: ["Youhu", "Yangyang", "Baizhi"],
+      standard4Stars: [
+      "Chixia",
+      "Danjin",
+      "Aalto",
+      "Yuanwu",
+      "Taoqi",
+      "Lumi",
+      "Mortefi",
+      "Sanhua",
+      "Weapon - Overture",
+      "Weapon - Lunar Cutter",
+      "Weapon - Commando of Conviction",
+      "Weapon - Variation",
+      "Weapon - Jinzhou Keeper",
+      "Weapon - Comet Flare",
+      "Weapon - Undying Flame",
+      "Weapon - Novaburst",
+      "Weapon - Cadenza",
+      "Weapon - Marcato",
+      "Weapon - Hollow Mirage",
+      "Weapon - Amity Accord",
+      "Weapon - Helios Cleaver",
+      "Weapon - Discord",
+      "Weapon - Dauntless Evernight",
+      "Weapon - Endless Collapse",
+      "Weapon - Waning Redshift",
+      "Weapon - Relativistic Jet",
+      "Weapon - Celestial Spiral",
+      "Weapon - Fusion Accretion",
+    ],
+      standard3Stars: standard3pool
+    },
+
+    // --------------------------------------- CARTETHYIA BANNER -------------------------------------------------
+
+     cartethyia: { 
+      featured5Star: "Cartethyia",
+      standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
+      featured4Stars: ["Youhu", "Yangyang", "Baizhi"],
+      standard4Stars: [
+      "Chixia",
+      "Danjin",
+      "Aalto",
+      "Yuanwu",
+      "Taoqi",
+      "Lumi",
+      "Mortefi",
+      "Sanhua",
+      "Weapon - Overture",
+      "Weapon - Lunar Cutter",
+      "Weapon - Commando of Conviction",
+      "Weapon - Variation",
+      "Weapon - Jinzhou Keeper",
+      "Weapon - Comet Flare",
+      "Weapon - Undying Flame",
+      "Weapon - Novaburst",
+      "Weapon - Cadenza",
+      "Weapon - Marcato",
+      "Weapon - Hollow Mirage",
+      "Weapon - Amity Accord",
+      "Weapon - Helios Cleaver",
+      "Weapon - Discord",
+      "Weapon - Dauntless Evernight",
+      "Weapon - Endless Collapse",
+      "Weapon - Waning Redshift",
+      "Weapon - Relativistic Jet",
+      "Weapon - Celestial Spiral",
+      "Weapon - Fusion Accretion",
+    ],
+      standard3Stars: standard3pool
+    },
+
+    // --------------------------------------- LYNAE BANNER (no Buling in standard 4) -------------------------------------------------
+
+     lynae: { 
+      featured5Star: "Lynae",
+      standard5Stars: ["Verina", "Encore", "Lingyang", "Calcharo", "Jianxin"],
+      featured4Stars: ["Youhu", "Yangyang", "Baizhi"],
+      standard4Stars: [
+      "Chixia",
+      "Danjin",
+      "Aalto",
+      "Yuanwu",
+      "Taoqi",
+      "Lumi",
+      "Mortefi",
+      "Sanhua",
+      "Weapon - Overture",
+      "Weapon - Lunar Cutter",
+      "Weapon - Commando of Conviction",
+      "Weapon - Variation",
+      "Weapon - Jinzhou Keeper",
+      "Weapon - Comet Flare",
+      "Weapon - Undying Flame",
+      "Weapon - Novaburst",
+      "Weapon - Cadenza",
+      "Weapon - Marcato",
+      "Weapon - Hollow Mirage",
+      "Weapon - Amity Accord",
+      "Weapon - Helios Cleaver",
+      "Weapon - Discord",
+      "Weapon - Dauntless Evernight",
+      "Weapon - Endless Collapse",
+      "Weapon - Waning Redshift",
+      "Weapon - Relativistic Jet",
+      "Weapon - Celestial Spiral",
+      "Weapon - Fusion Accretion",
+    ],
+      standard3Stars: standard3pool
+    },
 
     // --------------------------------------- CANTARELLA BANNER -------------------------------------------------
 
