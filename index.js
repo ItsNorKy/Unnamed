@@ -1,8 +1,8 @@
 const { Client, GatewayIntentBits, Partials, Collection} = require("discord.js")
 const { Guilds, GuildMembers, GuildMessages, DirectMessages, MessageContent, GuildVoiceStates } = GatewayIntentBits
 const { User, Message, GuildMember, Channel } = Partials
-const fs = require("fs");
-const path = require("path");
+//const fs = require("fs");
+//const path = require("path");
 require("dotenv").config()
 
 const client = new Client({
@@ -10,9 +10,9 @@ const client = new Client({
   partials: [User, Message, GuildMember, Channel]
 })
 
-const embedDir = path.join(__dirname, "chatbot", "logs", "exports", "embeddings");
-const { logsWithEmbeddings } = require("./chatbot/lib/smRetrieve");
-client.logsEmbeddings = logsWithEmbeddings;
+//const embedDir = path.join(__dirname, "chatbot", "logs", "exports", "embeddings");
+//const { logsWithEmbeddings } = require("./chatbot/lib/smRetrieve");
+//client.logsEmbeddings = logsWithEmbeddings;
 
 const { loadEvents } = require("./handlers/eventHandler")
 const { loadCommands } = require("./handlers/commandHandler")
@@ -30,7 +30,7 @@ module.exports = { client }
 
 client.login(process.env.TOKEN).then(() => {
 
-  require("./chatbot/api/server"); // initialize serverjs for chatbot
+  //require("./chatbot/api/server"); // initialize serverjs for chatbot
 
   console.log("Bot is online!")
 

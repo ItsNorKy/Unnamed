@@ -33,8 +33,8 @@ const rest = new REST({version: '10'}).setToken(token);
 
         await rest.put(
         
-            Routes.applicationGuildCommands( // Routes.applicationCommands(clientId) - Global commands
-                clientid,
+            Routes.applicationCommands( // Routes.applicationCommands(clientId) - Global commands
+                clientid
                 //guildid,
             ),
             { body: commandsArray}

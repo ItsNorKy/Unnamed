@@ -26,11 +26,11 @@ module.exports = {
             const channel = interaction.options.getChannel('channel') ?? interaction.channel
             const message = interaction.options.getString('message') 
 
-            interaction.deferReply()
+            interaction.deferReply().then(() => {  
             interaction.deleteReply().then(() => {  
             channel.send(message)
             } 
-        )
+        )})
 
         } else {
             const invalid = new EmbedBuilder()
