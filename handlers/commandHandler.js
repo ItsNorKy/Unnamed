@@ -35,7 +35,7 @@ const rest = new REST({version: '10'}).setToken(token);
         
             Routes.applicationGuildCommands( // Routes.applicationCommands(clientId) - Global commands
                 clientid,
-                guildid,
+                //guildid,
             ),
             { body: commandsArray}
         )

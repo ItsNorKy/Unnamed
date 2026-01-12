@@ -1,4 +1,4 @@
-const { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require("discord.js")
+const { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder } = require("discord.js")
 const config = require("../../config.json")
 const emotes = require("../../emotes.json")
 
