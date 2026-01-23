@@ -88,25 +88,6 @@ module.exports = {
 
     await saveUser(userState);
 
-    const special = results.some(
-      result => result && result.name && result.name.toLowerCase().includes("lingyang")
-    );
-    if (special) {
-      const videoPath = path.resolve(__dirname, "../../gacha/assets/special.mp4");
-      if (fs.existsSync(videoPath)) {
-        const video = new AttachmentBuilder(videoPath, { name: "special.mp4" });
-        await interaction.editReply({
-          content: "Holy moly, you pulled the femboy!",
-          files: [video]
-        });
-      } else {
-        await interaction.editReply({
-          content: "Holy moly, you pulled the femboy! (No video found)"
-        });
-      }
-      await new Promise(resolve => setTimeout(resolve, 13000));
-    }
-
     results.sort((a, b) => b.rarity - a.rarity);
     const highestRarity = Math.max(...results.map(r => r.rarity));
     const rarityColors = { 3: 0xa7ebfb, 4: 0xd68fd9, 5: 0xffd700 };
