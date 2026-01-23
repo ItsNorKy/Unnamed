@@ -68,27 +68,52 @@ async function loadMenu(interaction, client) {
 
             try {
 
-                const newTicketCN = await guild.channels.create({
-                    name: interaction.user.username,
-                    type: ChannelType.GuildText,
-                    parent: server.categoryId,
-                    permissionOverwrites: [
-                    {
-                        id: interaction.user.id,
-                        allow: [PermissionsBitField.Flags.ViewChannel],
-                    },
+                const staffRoles = guild.roles.cache.filter(role =>
+                !role.managed &&
+                role.permissions.has(PermissionsBitField.Flags.ManageMessages)
+                );
 
-                    {
-                        id: guild.members.me.id,
-                        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ManageMessages],
-                    },
-            
-                    {
-                        id: guild.id,
-                        deny: [PermissionsBitField.Flags.ViewChannel],
-                    }
-                ]
-            })
+                const overwrites = [
+            {
+                id: guild.id,
+                deny: [PermissionsBitField.Flags.ViewChannel],
+            },
+            {
+                id: interaction.user.id,
+                allow: [
+                    PermissionsBitField.Flags.ViewChannel,
+                    PermissionsBitField.Flags.SendMessages,
+                    PermissionsBitField.Flags.ReadMessageHistory,
+                ],
+            },
+            {
+                id: guild.members.me.id,
+                allow: [
+                    PermissionsBitField.Flags.ViewChannel,
+                    PermissionsBitField.Flags.SendMessages,
+                    PermissionsBitField.Flags.ManageChannels,
+                    PermissionsBitField.Flags.ManageMessages,
+                ],
+            },
+        ];
+
+            for (const role of staffRoles.values()) {
+            overwrites.push({
+                id: role.id,
+                allow: [
+                    PermissionsBitField.Flags.ViewChannel,
+                    PermissionsBitField.Flags.SendMessages,
+                    PermissionsBitField.Flags.ReadMessageHistory,
+                ],
+            });
+        }
+
+            const newTicketCN = await guild.channels.create({
+                name: interaction.user.username,
+                type: ChannelType.GuildText,
+                parent: server.categoryId,
+                permissionOverwrites: overwrites,
+            });
 
                 const member = await guild.members.fetch(interaction.user.id).catch(() => null)
 
@@ -266,22 +291,52 @@ async function loadMenu(interaction, client) {
 
             try {
 
-              const newTicketCN = await guild.channels.create({
-                    name: interaction.user.username,
-                    type: ChannelType.GuildText,
-                    parent: server.categoryId,
-                    permissionOverwrites: [
-                    {
-                        id: guild.members.me.id,
-                        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.ManageMessages],
-                    },
-            
-                    {
-                        id: guild.id,
-                        deny: [PermissionsBitField.Flags.ViewChannel],
-                    }
-                ]
-            })
+                const staffRoles = guild.roles.cache.filter(role =>
+                !role.managed &&
+                role.permissions.has(PermissionsBitField.Flags.ManageMessages)
+                );
+
+                const overwrites = [
+            {
+                id: guild.id,
+                deny: [PermissionsBitField.Flags.ViewChannel],
+            },
+            {
+                id: interaction.user.id,
+                allow: [
+                    PermissionsBitField.Flags.ViewChannel,
+                    PermissionsBitField.Flags.SendMessages,
+                    PermissionsBitField.Flags.ReadMessageHistory,
+                ],
+            },
+            {
+                id: guild.members.me.id,
+                allow: [
+                    PermissionsBitField.Flags.ViewChannel,
+                    PermissionsBitField.Flags.SendMessages,
+                    PermissionsBitField.Flags.ManageChannels,
+                    PermissionsBitField.Flags.ManageMessages,
+                ],
+            },
+        ];
+
+            for (const role of staffRoles.values()) {
+            overwrites.push({
+                id: role.id,
+                allow: [
+                    PermissionsBitField.Flags.ViewChannel,
+                    PermissionsBitField.Flags.SendMessages,
+                    PermissionsBitField.Flags.ReadMessageHistory,
+                ],
+            });
+        }
+
+            const newTicketCN = await guild.channels.create({
+                name: interaction.user.username,
+                type: ChannelType.GuildText,
+                parent: server.categoryId,
+                permissionOverwrites: overwrites,
+            });
 
             await userTicket.create({ // generate data for user's ticket
                 userId: interaction.user.id,
